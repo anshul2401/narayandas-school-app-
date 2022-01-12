@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "602778659316",
+    "project_id": "narayandas-school-app",
+    "storage_bucket": "narayandas-school-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602778659316:android:77270b81a15f55c774b1a1",
+        "android_client_info": {
+          "package_name": "com.narayandas.school"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "602778659316-0fhub07fbm9faqmrarvtqldfhj52cdbt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnwf51cOIcoQrZjj4DFiJJS59okEE-2x4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "602778659316-0fhub07fbm9faqmrarvtqldfhj52cdbt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

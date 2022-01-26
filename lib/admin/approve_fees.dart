@@ -21,7 +21,17 @@ class _ApproveFeesState extends State<ApproveFees> {
   bool isLoading = false;
   @override
   void initState() {
-    // allFees.addAll(Provider.of<FeesProvider>(context, listen: false).fees);
+    setState(() {
+      isLoading = true;
+    });
+
+    Provider.of<FeesProvider>(context, listen: false)
+        .fetAndSetFees()
+        .then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
 
     super.initState();
   }

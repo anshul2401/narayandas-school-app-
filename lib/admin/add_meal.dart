@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:narayandas_app/admin/edit_meal.dart';
-import 'package:narayandas_app/model/fees_model.dart';
 import 'package:narayandas_app/model/meal_model.dart';
-import 'package:narayandas_app/model/parent_model.dart';
-import 'package:narayandas_app/provider/fees_provider.dart';
 import 'package:narayandas_app/provider/meal_provider.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
@@ -76,16 +72,14 @@ class _AddMealState extends State<AddMeal> {
         });
       });
     });
-    super.initState();
+    var mealProvider = Provider.of<MealProvider>(context, listen: false);
 
+    meals.addAll(mealProvider.meals);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var mealProvider = Provider.of<MealProvider>(context, listen: true);
-
-    meals.addAll(mealProvider.meals);
     return Scaffold(
       appBar: getAppBar('Meals', context),
       body: isLoading
@@ -116,11 +110,13 @@ class _AddMealState extends State<AddMeal> {
                                     padding: const EdgeInsets.only(right: 8.0),
                                     child: GestureDetector(
                                       onTap: () {
-                                        Navigator.of(context)
-                                            .pushReplacement(MaterialPageRoute(
-                                                builder: (context) => EditMeal(
-                                                      meal: meals[index],
-                                                    )));
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) => EditMeal(
+                                              meal: meals[index],
+                                            ),
+                                          ),
+                                        );
                                       },
                                       child: Icon(
                                         Icons.edit,

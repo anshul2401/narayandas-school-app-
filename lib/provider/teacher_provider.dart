@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:narayandas_app/chat/database.dart';
 import 'package:narayandas_app/model/fees_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:narayandas_app/model/teacher_model.dart';
@@ -24,6 +25,32 @@ class TeacherProvider with ChangeNotifier {
               'is_blocked': teacherModel.isBlocked
             }))
         .then((value) {
+      http
+          .post(
+        Uri.parse(authUrl),
+        body: json.encode({
+          'email': teacherModel.email,
+          'password': teacherModel.password,
+          'role': 'Teacher',
+          'is_blocked': false,
+          'role_id': json.decode(value.body)['name'],
+        }),
+      )
+          .catchError((error) {
+        print(error);
+        throw error;
+      });
+      Map<String, dynamic> userInfoMap = {
+        "email": teacherModel.email,
+        "username": teacherModel.email.replaceAll("@gmail.com", ""),
+        "name": teacherModel.name,
+        "imgUrl":
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png'
+      };
+
+      DatabaseMethods()
+          .addUserInfoToDB(json.decode(value.body)['name'], userInfoMap);
+
       var newTeacher = TeacherModel(
           id: json.decode(value.body)['name'],
           address: teacherModel.address,
@@ -47,6 +74,19 @@ class TeacherProvider with ChangeNotifier {
       final resopnse = await http.get(Uri.parse(teacherUrl));
       final data = json.decode(resopnse.body) as Map<String, dynamic>;
       final List<TeacherModel> loadedTeacher = [];
+      List<Map<String, String>> docs(List<dynamic> li) {
+        List<Map<String, String>> ls = [];
+        li.forEach((element) {
+          ls.add(
+            {
+              'doc_name': element['doc_name'],
+              'doc_img': element['doc_img'],
+            },
+          );
+        });
+        return ls;
+      }
+
       data.forEach((key, value) {
         loadedTeacher.add(TeacherModel(
           id: key,
@@ -55,7 +95,7 @@ class TeacherProvider with ChangeNotifier {
           password: value['password'],
           email: value['email'],
           datetime: value['date_time'],
-          document: [],
+          document: value['documents'] == null ? [] : docs(value['documents']),
           phone: value['phone'],
           isBlocked: value['is_blocked'],
           oneSignalId: value['one_signal_id'],
@@ -65,6 +105,33 @@ class TeacherProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> updateTeacher(String id, TeacherModel teacherModel) async {
+    final index = _teacher.indexWhere((c) => c.id == id);
+    if (index >= 0) {
+      try {
+        var url = baseUrl + 'teachers/$id.json';
+        await http.patch(Uri.parse(url),
+            body: json.encode({
+              'name': teacherModel.name,
+              'address': teacherModel.address,
+              'phone': teacherModel.phone,
+              'email': teacherModel.email,
+              'password': teacherModel.password,
+              'document': teacherModel.document,
+              'date_time': teacherModel.datetime,
+              'one_signal_id': teacherModel.oneSignalId,
+              'is_blocked': teacherModel.isBlocked
+            }));
+        _teacher[index] = teacherModel;
+        notifyListeners();
+      } catch (e) {
+        throw (e);
+      }
+    } else {
+      print('...');
     }
   }
 }

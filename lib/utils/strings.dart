@@ -1,3 +1,5 @@
+import 'package:narayandas_app/model/auth_model.dart';
+
 const String baseUrl =
     'https://narayandas-school-app-default-rtdb.asia-southeast1.firebasedatabase.app/';
 const String parentUrl = baseUrl + 'parents.json';
@@ -8,7 +10,11 @@ const String mealUrl = baseUrl + 'meals.json';
 const String studentAttendanceUrl = baseUrl + 'studentAttendance.json';
 const String teacherAttendanceUrl = baseUrl + 'teacherAttendance.json';
 const String homeworkUrl = baseUrl + 'homework.json';
+const String authUrl = baseUrl + 'auth.json';
+const String galleryUrl = baseUrl + 'gallery.json';
 const String oneSignalUrl = baseUrl + 'one_signal.json';
+AuthModel? currentUser;
+
 // Constant Strings fields
 const String NAME = 'name';
 const String EMAIL = 'email';

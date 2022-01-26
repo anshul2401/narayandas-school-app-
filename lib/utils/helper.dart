@@ -8,6 +8,20 @@ import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:narayandas_app/utils/colors.dart';
 
+Text getBoldTextCenter(String text, double fontSize, Color color) {
+  return Text(
+    text,
+    style: GoogleFonts.varelaRound(
+        textStyle: TextStyle(
+      fontSize: fontSize,
+      fontWeight: FontWeight.bold,
+      color: color,
+    )),
+    textAlign: TextAlign.center,
+    softWrap: true,
+  );
+}
+
 Text getBoldText(String text, double fontSize, Color color) {
   return Text(
     text,
@@ -17,6 +31,22 @@ Text getBoldText(String text, double fontSize, Color color) {
       fontWeight: FontWeight.bold,
       color: color,
     )),
+    textAlign: TextAlign.start,
+    softWrap: true,
+  );
+}
+
+Text getItalicText(String text, double fontSize, Color color) {
+  return Text(
+    text,
+    style: GoogleFonts.varelaRound(
+        textStyle: TextStyle(
+      fontSize: fontSize,
+      fontStyle: FontStyle.italic,
+      color: color,
+    )),
+    textAlign: TextAlign.center,
+    softWrap: true,
   );
 }
 
@@ -29,6 +59,26 @@ Text getBoldCaptialText(String text, double fontSize, Color color) {
       fontWeight: FontWeight.bold,
       color: color,
     )),
+    textAlign: TextAlign.center,
+    softWrap: true,
+  );
+}
+
+Widget getButton(VoidCallback onVoidCallBack, String text, color) {
+  return GestureDetector(
+    onTap: onVoidCallBack,
+    child: Container(
+      decoration:
+          BoxDecoration(color: color, borderRadius: BorderRadius.circular(5)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: getNormalText(
+          text,
+          12,
+          Colors.white,
+        ),
+      ),
+    ),
   );
 }
 
@@ -42,6 +92,22 @@ Text getNormalText(String text, double fontSize, Color color) {
         color: color,
       ),
     ),
+    textAlign: TextAlign.start,
+    softWrap: true,
+  );
+}
+
+Text getNormalTextCenter(String text, double fontSize, Color color) {
+  return Text(
+    text,
+    style: GoogleFonts.varelaRound(
+      textStyle: TextStyle(
+        overflow: TextOverflow.clip,
+        fontSize: fontSize,
+        color: color,
+      ),
+    ),
+    textAlign: TextAlign.center,
     softWrap: true,
   );
 }

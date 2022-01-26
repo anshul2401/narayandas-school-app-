@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/admin/add_attendance.dart';
 import 'package:narayandas_app/admin/add_homework.dart';
+import 'package:narayandas_app/admin/promote_student.dart';
 import 'package:narayandas_app/admin/view_homework.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
@@ -8,8 +9,12 @@ import 'package:narayandas_app/utils/helper.dart';
 class SelectClass extends StatefulWidget {
   final bool isHomework;
   final bool isViewHomework;
+  final bool isPromotion;
   const SelectClass(
-      {Key? key, required this.isHomework, required this.isViewHomework})
+      {Key? key,
+      required this.isHomework,
+      required this.isViewHomework,
+      required this.isPromotion})
       : super(key: key);
 
   @override
@@ -62,9 +67,13 @@ class _SelectClassState extends State<SelectClass> {
                             ? Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => ViewHomework(
                                     standard: standardList[index])))
-                            : Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => AddAttendance(
-                                    standard: standardList[index])));
+                            : widget.isPromotion
+                                ? Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => PromoteStudent(
+                                        standard: standardList[index])))
+                                : Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => AddAttendance(
+                                        standard: standardList[index])));
                   },
                   child: Card(
                       child: Padding(

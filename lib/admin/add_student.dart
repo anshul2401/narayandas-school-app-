@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:narayandas_app/admin/add_fees.dart';
 import 'package:narayandas_app/model/parent_model.dart';
 import 'package:narayandas_app/provider/parents_provider.dart';
@@ -39,6 +43,9 @@ class _AddStudentState extends State<AddStudent> {
   late String docImg;
   String? gender;
   late List<Map<String, String>> documents = [];
+  XFile? file;
+  UploadTask? task;
+  final ImagePicker _picker = ImagePicker();
 
   List<String> standardList = [
     'PPlay Group',
@@ -206,17 +213,6 @@ class _AddStudentState extends State<AddStudent> {
                         ),
                       ],
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        _displayTextInputDialogDocument(context);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          getNormalText('Add Document', 14, Colors.lightBlue)
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -232,7 +228,7 @@ class _AddStudentState extends State<AddStudent> {
                         children.add(ChildModel(
                           name: studentName,
                           standard: standard!,
-                          documents: documents,
+                          documents: [],
                           dob: dob,
                           bloodGroup: bloodGroup,
                           gender: gender!,
@@ -256,7 +252,8 @@ class _AddStudentState extends State<AddStudent> {
     );
   }
 
-  Future<void> _displayTextInputDialogDocument(BuildContext context) async {
+  Future<void> _displayTextInputDialogDocument(
+      BuildContext context, String name) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -276,16 +273,57 @@ class _AddStudentState extends State<AddStudent> {
                     controller: _textFieldController5,
                     decoration: InputDecoration(hintText: "Document name"),
                   ),
-                  TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        docImg = value;
-                      });
-                    },
-                    keyboardType: TextInputType.datetime,
-                    controller: _textFieldController6,
-                    decoration: InputDecoration(hintText: "Image url"),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: getNormalText(
+                              file == null ? '' : file!.name, 12, Colors.black),
+                        ),
+                        file == null
+                            ? Container()
+                            : IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    file = null;
+                                  });
+                                },
+                                icon: Icon(Icons.delete))
+                      ],
+                    ),
                   ),
+                  file == null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  selectImageCamera();
+                                },
+                                child:
+                                    getNormalText('Camera', 14, Colors.blue)),
+                            GestureDetector(
+                                onTap: () {
+                                  selectImageGallery();
+                                },
+                                child:
+                                    getNormalText('Gallery', 14, Colors.blue)),
+                          ],
+                        )
+                      : Container(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  // RaisedButton(
+                  //   color: MyColors.blueColor,
+                  //   shape: StadiumBorder(),
+                  //   child: getBoldText('Upload Homework', 13, Colors.white),
+                  //   onPressed: () {
+                  //     uploadImage();
+                  //   },
+                  // )
                 ],
               ),
             ),
@@ -295,16 +333,12 @@ class _AddStudentState extends State<AddStudent> {
                 textColor: Colors.white,
                 child: Text('Add'),
                 onPressed: () {
-                  setState(() {
-                    documents.add({
-                      'doc_name': docName,
-                      'doc_img': docImg,
-                    });
-                    _textFieldController5.clear();
-                    _textFieldController6.clear();
+                  uploadImage(name);
+                  Navigator.pop(context);
+                  // setState(() {
+                  //   _textFieldController6.clear();
 
-                    Navigator.pop(context);
-                  });
+                  // });
                 },
               ),
             ],
@@ -312,9 +346,74 @@ class _AddStudentState extends State<AddStudent> {
         });
   }
 
+  Future selectImageCamera() async {
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      file = XFile(photo!.path);
+    });
+  }
+
+  Future selectImageGallery() async {
+    final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      file = XFile(photo!.path);
+    });
+  }
+
+  Future uploadImage(String name) async {
+    setState(() {
+      isLoading = true;
+    });
+    File? newFile;
+
+    if (file == null) return;
+    newFile = File(file!.path);
+    final dest = 'student_docs/${file!.name}';
+    task = FirebaseApi.uploadFile(dest, newFile);
+    if (task == null) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    final snapshot = await task!.whenComplete(() {
+      setState(() {
+        file = null;
+
+        isLoading = false;
+      });
+    });
+    final urlDownload = await snapshot.ref.getDownloadURL();
+    var document = {
+      'doc_name': docName,
+      'doc_img': urlDownload,
+    };
+    setState(() {
+      ChildModel child = children.firstWhere((element) {
+        return element.name == name;
+      });
+      var docs = child.documents;
+      docs.add(document);
+
+      children[children.indexWhere((element) => element.name == name)] =
+          ChildModel(
+              name: child.name,
+              standard: child.standard,
+              documents: docs,
+              bloodGroup: child.bloodGroup,
+              dob: child.dob,
+              gender: child.gender);
+
+      _textFieldController5.clear();
+    });
+    // saveForm(urlDownload);
+  }
+
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+    final _formkey2 = GlobalKey<FormState>();
     return Scaffold(
       appBar: getAppBar('New Admission', context),
       body: isLoading
@@ -322,6 +421,7 @@ class _AddStudentState extends State<AddStudent> {
               child: CircularProgressIndicator(),
             )
           : SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Form(
@@ -338,21 +438,152 @@ class _AddStudentState extends State<AddStudent> {
                         height: 10,
                       ),
                       ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: children.length,
                           itemBuilder: (context, index) {
                             return Container(
                               padding: EdgeInsets.all(8),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              child: Column(
                                 children: [
-                                  getBoldText(
-                                      (index + 1).toString(), 14, Colors.black),
-                                  getNormalText(
-                                      children[index].name, 14, Colors.black),
-                                  getNormalText(children[index].standard, 14,
-                                      Colors.black)
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      getBoldText((index + 1).toString(), 14,
+                                          Colors.black),
+                                      getNormalText(children[index].name, 14,
+                                          Colors.black),
+                                      getNormalText(children[index].standard,
+                                          14, Colors.black),
+                                    ],
+                                  ),
+                                  children[index].documents.isNotEmpty
+                                      ? ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount:
+                                              children[index].documents.length,
+                                          itemBuilder: (context, indexx) {
+                                            return Row(
+                                              children: [
+                                                getNormalText(
+                                                    children[index]
+                                                            .documents
+                                                            .isEmpty
+                                                        ? ""
+                                                        : children[index]
+                                                                    .documents[
+                                                                indexx]
+                                                            ['doc_name']!,
+                                                    15,
+                                                    Colors.black),
+                                              ],
+                                            );
+                                          })
+                                      : Container(
+                                          height: 0,
+                                        ),
+                                  Form(
+                                    key: _formkey2,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        TextFormField(
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please enter some text';
+                                            }
+                                            return null;
+                                          },
+                                          onSaved: (newValue) {
+                                            docName = newValue!;
+                                          },
+                                          controller: _textFieldController5,
+                                          decoration: InputDecoration(
+                                              hintText: "Document name"),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.75,
+                                                child: getNormalText(
+                                                    file == null
+                                                        ? ''
+                                                        : file!.name,
+                                                    12,
+                                                    Colors.black),
+                                              ),
+                                              file == null
+                                                  ? Container()
+                                                  : IconButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          file = null;
+                                                        });
+                                                      },
+                                                      icon: Icon(Icons.delete))
+                                            ],
+                                          ),
+                                        ),
+                                        file == null
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  GestureDetector(
+                                                      onTap: () {
+                                                        selectImageCamera();
+                                                      },
+                                                      child: getNormalText(
+                                                          'Camera',
+                                                          14,
+                                                          Colors.blue)),
+                                                  GestureDetector(
+                                                      onTap: () {
+                                                        selectImageGallery();
+                                                      },
+                                                      child: getNormalText(
+                                                          'Gallery',
+                                                          14,
+                                                          Colors.blue)),
+                                                ],
+                                              )
+                                            : Container(),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        // RaisedButton(
+                                        //   color: MyColors.blueColor,
+                                        //   shape: StadiumBorder(),
+                                        //   child: getBoldText('Upload Homework', 13, Colors.white),
+                                        //   onPressed: () {
+                                        //     uploadImage();
+                                        //   },
+                                        // )
+                                      ],
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _formkey2.currentState!.save();
+                                      uploadImage(children[index].name);
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        getNormalText('Add Document', 14,
+                                            Colors.lightBlue)
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             );
@@ -362,6 +593,9 @@ class _AddStudentState extends State<AddStudent> {
                       ),
                       GestureDetector(
                         onTap: () {
+                          setState(() {
+                            documents.clear();
+                          });
                           _displayTextInputDialog(context);
                         },
                         child: Row(
@@ -568,7 +802,7 @@ class _AddStudentState extends State<AddStudent> {
                                       .showSnackBar(const SnackBar(
                                     content: Text('Data Added'),
                                   ));
-                                  Navigator.of(context).push(
+                                  Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                       builder: (context) => AddFees(
                                         parentModel:

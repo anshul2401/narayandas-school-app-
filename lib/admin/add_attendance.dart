@@ -79,14 +79,10 @@ class _AddAttendanceState extends State<AddAttendance> {
                                         Colors.black),
                                     getNormalText(filterStudent[index].name, 14,
                                         Colors.black),
-                                    getNormalText(
-                                      presentStudents
-                                              .contains(filterStudent[index])
-                                          ? 'P'
-                                          : '',
-                                      15,
-                                      Colors.green,
-                                    ),
+                                    presentStudents
+                                            .contains(filterStudent[index])
+                                        ? Icon(Icons.check_box)
+                                        : Icon(Icons.check_box_outline_blank)
                                   ],
                                 ),
                               ),

@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:narayandas_app/chat/chat_home.dart';
+import 'package:narayandas_app/chat/database.dart';
 import 'package:narayandas_app/model/parent_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:narayandas_app/model/student_model.dart';
@@ -59,6 +61,32 @@ class ParentsProvider with ChangeNotifier {
             throw error;
           });
         });
+
+        http
+            .post(
+          Uri.parse(authUrl),
+          body: json.encode({
+            'email': parent.email,
+            'password': parent.password,
+            'role': 'Parent',
+            'is_blocked': false,
+            'role_id': json.decode(value.body)['name'],
+          }),
+        )
+            .catchError((error) {
+          print(error);
+          throw error;
+        });
+        Map<String, dynamic> userInfoMap = {
+          "email": parent.email,
+          "username": parent.email.replaceAll("@gmail.com", ""),
+          "name": parent.fatherName,
+          "imgUrl":
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png'
+        };
+
+        DatabaseMethods()
+            .addUserInfoToDB(json.decode(value.body)['name'], userInfoMap);
 
         final newParent = ParentModel(
             id: json.decode(value.body)['name'],
@@ -120,6 +148,40 @@ class ParentsProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> updateParent(String id, ParentModel parent) async {
+    final index = _parents.indexWhere((c) => c.id == id);
+    if (index >= 0) {
+      List<Map<String, dynamic>> childdata = [];
+      parent.children.forEach((element) {
+        childdata.add(element.toJson());
+      });
+      try {
+        var url = baseUrl + 'parents/$id.json';
+        await http.patch(Uri.parse(url),
+            body: json.encode({
+              'email': parent.email,
+              'password': parent.password,
+              'father_name': parent.fatherName,
+              'mother_name': parent.motherName,
+              'address': parent.address,
+              'phone_number': parent.phoneNumber,
+              'one_signal_id': parent.oneSignalId,
+              'total_fees': parent.totalFee,
+              'children': childdata,
+              'fees': parent.fees,
+              'date_time': parent.dateTime,
+              'is_blocked': parent.isBlocked,
+            }));
+        _parents[index] = parent;
+        notifyListeners();
+      } catch (e) {
+        throw (e);
+      }
+    } else {
+      print('...');
     }
   }
 }

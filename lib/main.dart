@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/admin/home_page.dart';
+import 'package:narayandas_app/login.dart';
+import 'package:narayandas_app/provider/aut_provider.dart';
 import 'package:narayandas_app/provider/fees_provider.dart';
+import 'package:narayandas_app/provider/gallery_provider.dart';
 import 'package:narayandas_app/provider/homework_provider.dart';
 import 'package:narayandas_app/provider/meal_provider.dart';
 import 'package:narayandas_app/provider/parents_provider.dart';
@@ -9,6 +12,7 @@ import 'package:narayandas_app/provider/student_attendance_provider.dart';
 import 'package:narayandas_app/provider/student_provider.dart';
 import 'package:narayandas_app/provider/teacher_attendance_provider.dart';
 import 'package:narayandas_app/provider/teacher_provider.dart';
+import 'package:narayandas_app/utils/shared_pref.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -48,13 +52,19 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (context) => HomeworkProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => AuthProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => GalleryProvider(),
+          ),
         ],
         child: MaterialApp(
           title: 'Narayandas International',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: const AdminHomePage(),
+          home: Login(),
         ));
   }
 }

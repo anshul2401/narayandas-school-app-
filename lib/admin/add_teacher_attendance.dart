@@ -73,13 +73,9 @@ class _AddTeacherAttendanceState extends State<AddTeacherAttendance> {
                                         Colors.black),
                                     getNormalText(
                                         teachers[index].name, 14, Colors.black),
-                                    getNormalText(
-                                      presentTeachers.contains(teachers[index])
-                                          ? 'P'
-                                          : '',
-                                      15,
-                                      Colors.green,
-                                    ),
+                                    presentTeachers.contains(teachers[index])
+                                        ? Icon(Icons.check_box)
+                                        : Icon(Icons.check_box_outline_blank)
                                   ],
                                 ),
                               ),

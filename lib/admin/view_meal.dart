@@ -33,14 +33,13 @@ class _ViewMealState extends State<ViewMeal> {
         });
       });
     });
+    var mealProvider = Provider.of<MealProvider>(context, listen: false);
+    meals.addAll(mealProvider.meals);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var mealProvider = Provider.of<MealProvider>(context, listen: false);
-    meals.addAll(mealProvider.meals);
-
     return Scaffold(
       appBar: getAppBar('Meals', context),
       body: isLoading

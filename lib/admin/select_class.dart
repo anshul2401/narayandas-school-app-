@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:narayandas_app/admin/add_attendance.dart';
 import 'package:narayandas_app/admin/add_homework.dart';
 import 'package:narayandas_app/admin/promote_student.dart';
+import 'package:narayandas_app/admin/view_attendance.dart';
 import 'package:narayandas_app/admin/view_homework.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
@@ -10,12 +11,14 @@ class SelectClass extends StatefulWidget {
   final bool isHomework;
   final bool isViewHomework;
   final bool isPromotion;
-  const SelectClass(
-      {Key? key,
-      required this.isHomework,
-      required this.isViewHomework,
-      required this.isPromotion})
-      : super(key: key);
+  final bool isViewAttendance;
+  const SelectClass({
+    Key? key,
+    required this.isHomework,
+    required this.isViewHomework,
+    required this.isPromotion,
+    required this.isViewAttendance,
+  }) : super(key: key);
 
   @override
   _SelectClassState createState() => _SelectClassState();
@@ -59,21 +62,29 @@ class _SelectClassState extends State<SelectClass> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    widget.isHomework
-                        ? Navigator.of(context).push(MaterialPageRoute(
+                    widget.isViewAttendance
+                        ? Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context) =>
-                                AddHomework(standard: standardList[index])))
-                        : widget.isViewHomework
-                            ? Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ViewHomework(
-                                    standard: standardList[index])))
-                            : widget.isPromotion
-                                ? Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => PromoteStudent(
-                                        standard: standardList[index])))
-                                : Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => AddAttendance(
-                                        standard: standardList[index])));
+                                ViewAttendance(standard: standardList[index])))
+                        : widget.isHomework
+                            ? Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                builder: (context) =>
+                                    AddHomework(standard: standardList[index])))
+                            : widget.isViewHomework
+                                ? Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) => ViewHomework(
+                                            standard: standardList[index])))
+                                : widget.isPromotion
+                                    ? Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) => PromoteStudent(
+                                                standard: standardList[index])))
+                                    : Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) => AddAttendance(
+                                                standard:
+                                                    standardList[index])));
                   },
                   child: Card(
                       child: Padding(

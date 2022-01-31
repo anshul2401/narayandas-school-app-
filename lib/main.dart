@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/admin/home_page.dart';
 import 'package:narayandas_app/login.dart';
+import 'package:narayandas_app/provider/account_provider.dart';
 import 'package:narayandas_app/provider/aut_provider.dart';
 import 'package:narayandas_app/provider/fees_provider.dart';
 import 'package:narayandas_app/provider/gallery_provider.dart';
@@ -57,6 +58,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider(
             create: (context) => GalleryProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => AccountProvider(),
           ),
         ],
         child: MaterialApp(

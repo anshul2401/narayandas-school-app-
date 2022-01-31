@@ -6,6 +6,7 @@ import 'package:narayandas_app/provider/student_attendance_provider.dart';
 import 'package:narayandas_app/provider/student_provider.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
+import 'package:narayandas_app/utils/strings.dart';
 import 'package:provider/provider.dart';
 
 class AddAttendance extends StatefulWidget {
@@ -20,6 +21,35 @@ class _AddAttendanceState extends State<AddAttendance> {
   bool isLoading = false;
   List<StudentModel> presentStudents = [];
   List<StudentModel> absentStudents = [];
+  List<StudentAttendanceModel> attendance = [];
+  bool isTaken = false;
+  @override
+  void initState() {
+    setState(() {
+      isLoading = true;
+    });
+
+    Provider.of<StudentAttendanceProvider>(context, listen: false)
+        .fetAndSetStudentAttendance()
+        .then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+    var st = Provider.of<StudentAttendanceProvider>(context, listen: false);
+    attendance.addAll(st.studentAttendance);
+    attendance.forEach((element) {
+      if (formatDateTime(element.dateTime) ==
+              formatDateTime(DateTime.now().toString()) &&
+          element.standard == widget.standard) {
+        setState(() {
+          isTaken = true;
+        });
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var studentProvider = Provider.of<StudentProvider>(context);
@@ -55,40 +85,46 @@ class _AddAttendanceState extends State<AddAttendance> {
                     SizedBox(
                       height: 10,
                     ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: filterStudent.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                presentStudents.contains(filterStudent[index])
-                                    ? presentStudents
-                                        .remove(filterStudent[index])
-                                    : presentStudents.add(filterStudent[index]);
-                              });
-                            },
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    getBoldText((index + 1).toString(), 15,
-                                        Colors.black),
-                                    getNormalText(filterStudent[index].name, 14,
-                                        Colors.black),
+                    isTaken
+                        ? getNormalTextCenter(
+                            'Attendance For today is taken', 15, Colors.black)
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filterStudent.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
                                     presentStudents
                                             .contains(filterStudent[index])
-                                        ? Icon(Icons.check_box)
-                                        : Icon(Icons.check_box_outline_blank)
-                                  ],
+                                        ? presentStudents
+                                            .remove(filterStudent[index])
+                                        : presentStudents
+                                            .add(filterStudent[index]);
+                                  });
+                                },
+                                child: Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        getBoldText((index + 1).toString(), 15,
+                                            Colors.black),
+                                        getNormalText(filterStudent[index].name,
+                                            14, Colors.black),
+                                        presentStudents
+                                                .contains(filterStudent[index])
+                                            ? Icon(Icons.check_box)
+                                            : Icon(
+                                                Icons.check_box_outline_blank)
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }),
+                              );
+                            }),
                     SizedBox(
                       height: 10,
                     ),
@@ -99,7 +135,7 @@ class _AddAttendanceState extends State<AddAttendance> {
                         onPressed: () {
                           List<Map<String, dynamic>> presentStudentMap = [];
                           List<Map<String, dynamic>> absentStudentMap = [];
-                          students.forEach((e) {
+                          filterStudent.forEach((e) {
                             presentStudents.contains(e)
                                 ? presentStudentMap.add({
                                     'name': e.name,
@@ -155,7 +191,10 @@ class _AddAttendanceState extends State<AddAttendance> {
                                                     dateTime: DateTime.now()
                                                         .toString(),
                                                     standard: widget.standard,
-                                                    teacherId: '',
+                                                    teacherId: currentUser ==
+                                                            null
+                                                        ? ''
+                                                        : currentUser!.roleId,
                                                     presentChildren:
                                                         presentStudentMap,
                                                     absentChildren:

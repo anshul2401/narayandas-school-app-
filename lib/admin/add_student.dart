@@ -417,9 +417,7 @@ class _AddStudentState extends State<AddStudent> {
     return Scaffold(
       appBar: getAppBar('New Admission', context),
       body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? getLoading(context)
           : SingleChildScrollView(
               physics: ClampingScrollPhysics(),
               child: Padding(
@@ -675,6 +673,7 @@ class _AddStudentState extends State<AddStudent> {
                           hintText: 'Enter a phone number',
                           labelText: 'Phone',
                         ),
+                        keyboardType: TextInputType.phone,
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please enter some text';
@@ -694,6 +693,7 @@ class _AddStudentState extends State<AddStudent> {
                           hintText: 'Enter total fees',
                           labelText: 'Total Fees',
                         ),
+                        keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please enter some value';

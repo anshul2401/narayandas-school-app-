@@ -137,6 +137,7 @@ class _PHomePageState extends State<PHomePage> {
                               isHomework: false,
                               isViewHomework: true,
                               isPromotion: false,
+                              isViewAttendance: false,
                             )));
               }),
               getActionCard('add_fees_b.png', 'Fee History', () {

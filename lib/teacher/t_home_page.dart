@@ -33,6 +33,7 @@ class _THomePageState extends State<THomePage> {
                               isHomework: false,
                               isViewHomework: false,
                               isPromotion: false,
+                              isViewAttendance: false,
                             )));
               }),
               getActionButton(
@@ -50,6 +51,7 @@ class _THomePageState extends State<THomePage> {
                               isHomework: true,
                               isViewHomework: false,
                               isPromotion: false,
+                              isViewAttendance: false,
                             )));
               }),
             ],
@@ -64,6 +66,7 @@ class _THomePageState extends State<THomePage> {
                               isHomework: false,
                               isViewHomework: true,
                               isPromotion: false,
+                              isViewAttendance: false,
                             )));
               }),
               getActionButton('view_meal_b.png', 'Meal', () {
@@ -100,13 +103,16 @@ class _THomePageState extends State<THomePage> {
               ),
               getActionButton(
                 'add_fees_b.png',
-                'Add Fees',
+                'Attendance',
                 () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => SearchParent(
-                                isEdit: false,
+                          builder: (context) => SelectClass(
+                                isHomework: false,
+                                isViewHomework: false,
+                                isPromotion: false,
+                                isViewAttendance: true,
                               )));
                 },
               ),

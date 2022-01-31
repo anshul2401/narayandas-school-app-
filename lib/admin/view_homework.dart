@@ -95,34 +95,39 @@ class _ViewHomeworkState extends State<ViewHomework> {
                                       selectedDateHomework[index].homeworktext,
                                       14,
                                       Colors.black),
-                                  getNormalText(
-                                      '(${selectedDateHomework[index].remark})',
-                                      13,
-                                      Colors.grey),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      FullScreenImage(
-                                                          imgUrl:
-                                                              selectedDateHomework[
-                                                                      index]
-                                                                  .imgUrl)));
-                                        },
-                                        child: Container(
-                                          height: 200,
-                                          child: Image.network(
-                                            selectedDateHomework[index].imgUrl,
-                                            fit: BoxFit.fitHeight,
-                                          ),
+                                  selectedDateHomework[index].remark == ''
+                                      ? Container()
+                                      : getNormalText(
+                                          '(${selectedDateHomework[index].remark})',
+                                          13,
+                                          Colors.grey),
+                                  selectedDateHomework[index].imgUrl == ''
+                                      ? Container()
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            FullScreenImage(
+                                                                imgUrl: selectedDateHomework[
+                                                                        index]
+                                                                    .imgUrl)));
+                                              },
+                                              child: Container(
+                                                height: 200,
+                                                child: Image.network(
+                                                  selectedDateHomework[index]
+                                                      .imgUrl,
+                                                  fit: BoxFit.fitHeight,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
                                   SizedBox(
                                     height: 10,
                                   ),

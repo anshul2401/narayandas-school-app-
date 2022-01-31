@@ -17,18 +17,19 @@ class AddTeacher extends StatefulWidget {
 }
 
 class _AddTeacherState extends State<AddTeacher> {
-  late String name;
-  late String email;
-  late String password;
-  late String address;
-  late String mobileNumber;
-  late String docName;
+  String name = '';
+  String email = '';
+  String password = '';
+  String address = '';
+  String mobileNumber = '';
+  String docName = '';
   late List<Map<String, String>> documents = [];
   XFile? file;
   UploadTask? task;
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
   TextEditingController t5 = TextEditingController();
+  TextEditingController t1 = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
@@ -48,6 +49,7 @@ class _AddTeacherState extends State<AddTeacher> {
                     children: [
                       getBoldText('Enter Details', 16, MyColors.blueColor),
                       TextFormField(
+                        keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
                           icon: Icon(
                             Icons.person,
@@ -66,7 +68,6 @@ class _AddTeacherState extends State<AddTeacher> {
                           name = newValue!;
                         },
                       ),
-
                       TextFormField(
                         decoration: const InputDecoration(
                           icon: Icon(
@@ -86,7 +87,6 @@ class _AddTeacherState extends State<AddTeacher> {
                           address = newValue!;
                         },
                       ),
-
                       TextFormField(
                         decoration: const InputDecoration(
                           icon: Icon(
@@ -129,7 +129,7 @@ class _AddTeacherState extends State<AddTeacher> {
                               height: 0,
                             ),
                       Column(
-                        mainAxisSize: MainAxisSize.min,
+                        // mainAxisSize: MainAxisSize.min,
                         children: [
                           Form(
                             key: _formKey2,
@@ -150,31 +150,42 @@ class _AddTeacherState extends State<AddTeacher> {
                                   decoration: InputDecoration(
                                       hintText: "Document name"),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.75,
-                                        child: getNormalText(
-                                            file == null ? '' : file!.name,
-                                            12,
-                                            Colors.black),
+                                file == null
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Row(
+                                          children: [
+                                            file == null
+                                                ? Container()
+                                                : Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.75,
+                                                    child: getNormalText(
+                                                        file!.name,
+                                                        12,
+                                                        Colors.black),
+                                                  ),
+                                            file == null
+                                                ? Container(
+                                                    height: 0,
+                                                  )
+                                                : IconButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        file = null;
+                                                      });
+                                                    },
+                                                    icon: Icon(Icons.delete))
+                                          ],
+                                        ),
+                                      )
+                                    : Container(
+                                        height: 0,
                                       ),
-                                      file == null
-                                          ? Container()
-                                          : IconButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  file = null;
-                                                });
-                                              },
-                                              icon: Icon(Icons.delete))
-                                    ],
-                                  ),
-                                ),
                                 file == null
                                     ? Row(
                                         mainAxisAlignment:
@@ -194,7 +205,9 @@ class _AddTeacherState extends State<AddTeacher> {
                                                   'Gallery', 14, Colors.blue)),
                                         ],
                                       )
-                                    : Container(),
+                                    : Container(
+                                        height: 0,
+                                      ),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -284,6 +297,7 @@ class _AddTeacherState extends State<AddTeacher> {
                       //     totalFees = int.parse(newValue!);
                       //   },
                       // ),
+
                       Container(
                         alignment: Alignment.center,
                         padding: const EdgeInsets.only(top: 20.0),

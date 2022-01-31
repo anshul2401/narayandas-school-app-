@@ -16,35 +16,6 @@ class ViewFees extends StatefulWidget {
 }
 
 class _ViewFeesState extends State<ViewFees> {
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Fees Added'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('fees successfully added'),
-                Text('This will reflect here once aproved by admin'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Done'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   final _formKey = GlobalKey<FormState>();
   int amount = 0;
   String remark = '';

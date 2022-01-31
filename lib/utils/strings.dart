@@ -12,6 +12,7 @@ const String teacherAttendanceUrl = baseUrl + 'teacherAttendance.json';
 const String homeworkUrl = baseUrl + 'homework.json';
 const String authUrl = baseUrl + 'auth.json';
 const String galleryUrl = baseUrl + 'gallery.json';
+const String accountUrl = baseUrl + 'account.json';
 const String oneSignalUrl = baseUrl + 'one_signal.json';
 AuthModel? currentUser;
 

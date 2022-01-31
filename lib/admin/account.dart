@@ -9,15 +9,14 @@ import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:provider/provider.dart';
 
-class AddFees extends StatefulWidget {
-  final ParentModel parentModel;
-  const AddFees({Key? key, required this.parentModel}) : super(key: key);
+class Account extends StatefulWidget {
+  const Account({Key? key}) : super(key: key);
 
   @override
-  _AddFeesState createState() => _AddFeesState();
+  _AccountState createState() => _AccountState();
 }
 
-class _AddFeesState extends State<AddFees> {
+class _AccountState extends State<Account> {
   Future<void> _showMyDialog() async {
     return showDialog<void>(
       context: context,
@@ -52,27 +51,53 @@ class _AddFeesState extends State<AddFees> {
   String remark = '';
   bool isLoading = false;
   String? modeOfPayment;
-  List<FeesModel> feesTillNow = [];
-  int paidAmount = 0;
+  List<AccountModel> account = [];
+  int total = 0;
   @override
   void initState() {
-    var feesProvider = Provider.of<FeesProvider>(context, listen: false);
-    for (var e in feesProvider.fees) {
-      e.parentId == widget.parentModel.id ? feesTillNow.add(e) : null;
-    }
-    for (var element in feesTillNow) {
-      paidAmount += element.amount;
-    }
+    // setState(() {
+    //   isLoading = true;
+    // });
+
+    // Provider.of<AccountProvider>(context, listen: false)
+    //     .fetchAndSetAccount()
+    //     .then((value) {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    // });
+    // var accountProvider = Provider.of<AccountProvider>(context, listen: false);
+    // account.addAll(accountProvider.account);
+    // for (var element in account) {
+    //   element.debCred == 'Debit'
+    //       ? total -= element.amount
+    //       : total += element.amount;
+    // }
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    getTotal() {
+      int total = 0;
+      for (var element in account) {
+        element.debCred == 'Debit'
+            ? total -= element.amount
+            : total += element.amount;
+      }
+      return total;
+    }
+
+    var accountProvider = Provider.of<AccountProvider>(context, listen: false);
+    account = (accountProvider.account);
+
     return Scaffold(
-      appBar: getAppBar('Fees', context),
+      appBar: getAppBar('Account', context),
       body: isLoading
           ? getLoading(context)
           : SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Form(
@@ -84,32 +109,32 @@ class _AddFeesState extends State<AddFees> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           getBoldText(
-                            'Total Fees: ₹ ${widget.parentModel.totalFee}',
+                            'Total Amount: ₹ ${getTotal()}',
                             14,
                             Colors.black,
                           )
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          getBoldText(
-                            'Due Fees: ₹ ${widget.parentModel.totalFee - paidAmount}',
-                            12,
-                            Colors.red,
-                          )
-                        ],
-                      ),
-                      getBoldText(
-                          'Previous installments', 15, MyColors.blueColor),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.end,
+                      //   children: [
+                      //     getBoldText(
+                      //       'Due Fees: ₹ ${0 - paidAmount}',
+                      //       12,
+                      //       Colors.red,
+                      //     )
+                      //   ],
+                      // ),
+                      getBoldText('Payments', 15, MyColors.blueColor),
                       SizedBox(
                         height: 10,
                       ),
-                      feesTillNow.isEmpty
+                      account.isEmpty
                           ? getNormalText('No Record', 13, Colors.black)
                           : ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: feesTillNow.length,
+                              itemCount: account.length,
                               itemBuilder: (context, index) {
                                 return Column(
                                   children: [
@@ -133,8 +158,7 @@ class _AddFeesState extends State<AddFees> {
                                           child: getNormalText(
                                               DateFormat('dd-MM-yy').format(
                                                   DateTime.parse(
-                                                      feesTillNow[index]
-                                                          .dateTime)),
+                                                      account[index].dateTime)),
                                               13,
                                               Colors.black),
                                         ),
@@ -144,20 +168,31 @@ class _AddFeesState extends State<AddFees> {
                                                   .width *
                                               0.55,
                                           child: getNormalText(
-                                              feesTillNow[index].remark,
+                                              account[index].remark,
                                               13,
                                               Colors.black),
                                         ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.15,
-                                          child: getNormalText(
-                                              '₹ ${feesTillNow[index].amount.toString()}',
-                                              13,
-                                              Colors.green),
-                                        ),
+                                        account[index].debCred == 'Credit'
+                                            ? Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.15,
+                                                child: getNormalText(
+                                                    '₹ ${account[index].amount.toString()}',
+                                                    13,
+                                                    Colors.green),
+                                              )
+                                            : Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.15,
+                                                child: getNormalText(
+                                                    '₹ -${account[index].amount.toString()}',
+                                                    13,
+                                                    Colors.red),
+                                              ),
                                       ],
                                     ),
                                     Divider()
@@ -224,9 +259,8 @@ class _AddFeesState extends State<AddFees> {
                             style: TextStyle(color: Colors.white),
                             iconEnabledColor: Colors.black,
                             items: <String>[
-                              'Online',
-                              'Cash',
-                              'Cheque',
+                              'Debit',
+                              'Credit',
                             ].map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -237,7 +271,7 @@ class _AddFeesState extends State<AddFees> {
                               );
                             }).toList(),
                             hint: Text(
-                              "Mode of payment",
+                              "Debit/Credit",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -258,12 +292,12 @@ class _AddFeesState extends State<AddFees> {
                           shape: StadiumBorder(),
                           color: MyColors.blueColor,
                           child: getBoldText(
-                            'Add Installment',
+                            'Add Record',
                             15,
                             Colors.white,
                           ),
                           onPressed: () {
-                            var feesProvider = Provider.of<FeesProvider>(
+                            var accountProvider = Provider.of<AccountProvider>(
                                 context,
                                 listen: false);
 
@@ -273,16 +307,15 @@ class _AddFeesState extends State<AddFees> {
                                   isLoading = true;
                                 });
                                 _formKey.currentState!.save();
-                                var newFees = FeesModel(
-                                    id: DateTime.now().toString(),
-                                    parentId: widget.parentModel.id,
-                                    amount: amount,
-                                    remark: remark,
-                                    modeOfPayment: modeOfPayment!,
-                                    dateTime: DateTime.now().toString(),
-                                    isApprovedByAdmin: false);
-                                feesProvider
-                                    .addFees(newFees)
+                                var newAccount = AccountModel(
+                                  id: DateTime.now().toString(),
+                                  amount: amount,
+                                  remark: remark,
+                                  debCred: modeOfPayment!,
+                                  dateTime: DateTime.now().toString(),
+                                );
+                                accountProvider
+                                    .addAccount(newAccount)
                                     .catchError((error) {
                                   setState(() {
                                     isLoading = false;
@@ -292,21 +325,9 @@ class _AddFeesState extends State<AddFees> {
                                     content: Text('Somethineg went wrong'),
                                   ));
                                 }).then((value) {
-                                  var accountProvider =
-                                      Provider.of<AccountProvider>(context,
-                                          listen: false);
-                                  accountProvider
-                                      .addAccount(AccountModel(
-                                          id: DateTime.now().toString(),
-                                          remark: remark,
-                                          debCred: 'Credit',
-                                          dateTime: DateTime.now().toString(),
-                                          amount: amount))
-                                      .then((value) {
-                                    setState(() {
-                                      isLoading = false;
-                                      _showMyDialog();
-                                    });
+                                  setState(() {
+                                    isLoading = false;
+                                    // _showMyDialog();
                                   });
 
                                   // Navigator.of(context).push(

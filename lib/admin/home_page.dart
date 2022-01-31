@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:narayandas_app/admin/account.dart';
 import 'package:narayandas_app/admin/add_gallery_image.dart';
 import 'package:narayandas_app/admin/add_meal.dart';
 import 'package:narayandas_app/admin/add_student.dart';
@@ -7,18 +8,21 @@ import 'package:narayandas_app/admin/add_teacher_attendance.dart';
 import 'package:narayandas_app/admin/approve_fees.dart';
 import 'package:narayandas_app/admin/parents_list.dart';
 import 'package:narayandas_app/admin/search_parent.dart';
+import 'package:narayandas_app/admin/search_student.dart';
 import 'package:narayandas_app/admin/select_class.dart';
 import 'package:narayandas_app/admin/teacher_list.dart';
 import 'package:narayandas_app/admin/view_meal.dart';
 import 'package:narayandas_app/chat/chat_home.dart';
 import 'package:narayandas_app/chat/chatscreen.dart';
 import 'package:narayandas_app/login.dart';
+import 'package:narayandas_app/provider/account_provider.dart';
 import 'package:narayandas_app/provider/fees_provider.dart';
 import 'package:narayandas_app/provider/homework_provider.dart';
 import 'package:narayandas_app/provider/meal_provider.dart';
 import 'package:narayandas_app/provider/parents_provider.dart';
 import 'package:narayandas_app/provider/student_provider.dart';
 import 'package:narayandas_app/provider/teacher_provider.dart';
+import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:narayandas_app/utils/shared_pref.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +79,13 @@ class _MyHomePageState extends State<AdminHomePage> {
         //   isLoading = false;
         // });
       });
+      Provider.of<AccountProvider>(context, listen: false)
+          .fetchAndSetAccount()
+          .then((value) {
+        // setState(() {
+        //   isLoading = false;
+        // });
+      });
       Provider.of<TeacherProvider>(context, listen: false)
           .fetAndSetTeachers()
           .then((value) {
@@ -96,14 +107,46 @@ class _MyHomePageState extends State<AdminHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Column(
+                children: [
+                  Container(
+                    height: 100,
+                    child: Image.asset(
+                      'assets/images/logo.jpeg',
+                    ),
+                  ),
+                  Spacer(),
+                  getBoldTextCenter('Welcome Admin', 15, MyColors.blueColor),
+                ],
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+              },
+              leading: Icon(
+                Icons.logout,
+                color: MyColors.blueColor,
+              ),
+              title: getNormalText('Logout', 15, Colors.black),
+            )
+          ],
+        ),
+      ),
       appBar: getAppBar('Welcome Admin', context),
       body: isLoading
           ? getLoading(context)
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  getNormalText(hh, 15, Colors.black),
+                  // getNormalText(hh, 15, Colors.black),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       getActionButton('add_student_attendance_b.png',
                           'Add Student attendance', () {
@@ -114,6 +157,7 @@ class _MyHomePageState extends State<AdminHomePage> {
                                       isHomework: false,
                                       isViewHomework: false,
                                       isPromotion: false,
+                                      isViewAttendance: false,
                                     )));
                       }),
                       getActionButton('add_teacher_attendance_b.png',
@@ -123,19 +167,25 @@ class _MyHomePageState extends State<AdminHomePage> {
                             MaterialPageRoute(
                                 builder: (context) => AddTeacherAttendance()));
                       }),
-                      getActionButton('add_homework_b.png', 'Add Homework', () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectClass(
-                                      isHomework: true,
-                                      isViewHomework: false,
-                                      isPromotion: false,
-                                    )));
-                      }),
+                      getActionButton(
+                        'edit_teacher.png',
+                        'View Attendance',
+                        () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SelectClass(
+                                        isHomework: false,
+                                        isViewHomework: false,
+                                        isPromotion: false,
+                                        isViewAttendance: true,
+                                      )));
+                        },
+                      ),
                     ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       getActionButton('view_homework_b.png', ' Homework', () {
                         Navigator.push(
@@ -145,13 +195,19 @@ class _MyHomePageState extends State<AdminHomePage> {
                                       isHomework: false,
                                       isViewHomework: true,
                                       isPromotion: false,
+                                      isViewAttendance: false,
                                     )));
                       }),
-                      getActionButton('view_meal_b.png', 'Meal', () {
+                      getActionButton('add_homework_b.png', 'Add Homework', () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ViewMeal()));
+                                builder: (context) => SelectClass(
+                                      isHomework: true,
+                                      isViewHomework: false,
+                                      isPromotion: false,
+                                      isViewAttendance: false,
+                                    )));
                       }),
                       getActionButton('edit_meal_b.png', 'Add/Edit Meal', () {
                         Navigator.push(context,
@@ -160,6 +216,7 @@ class _MyHomePageState extends State<AdminHomePage> {
                     ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       getActionButton(
                         'new_admission.png',
@@ -196,6 +253,7 @@ class _MyHomePageState extends State<AdminHomePage> {
                     ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       getActionButton(
                         'gallery.png',
@@ -215,9 +273,11 @@ class _MyHomePageState extends State<AdminHomePage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SelectClass(
-                                      isHomework: false,
-                                      isViewHomework: false,
-                                      isPromotion: true)));
+                                        isHomework: false,
+                                        isViewHomework: false,
+                                        isPromotion: true,
+                                        isViewAttendance: false,
+                                      )));
                         },
                       ),
                       getActionButton(
@@ -233,6 +293,7 @@ class _MyHomePageState extends State<AdminHomePage> {
                     ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       getActionButton(
                         'edit_teacher.png',
@@ -257,134 +318,166 @@ class _MyHomePageState extends State<AdminHomePage> {
                       ),
                       getActionButton(
                         'approve_fees.png',
-                        'Approve Fees',
+                        'Manage Account',
                         () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ApproveFees()));
+                                  builder: (context) => Account()));
                         },
                       ),
                     ],
                   ),
-                  RaisedButton(
-                      child: const Text('Add Student'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddStudent()));
-                      }),
-                  RaisedButton(
-                      child: const Text('Chat Screen'),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Home()));
-                      }),
-                  RaisedButton(
-                      child: Text('All Parents'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ParentsList()));
-                      }),
-                  RaisedButton(
-                      child: Text('Add Fees'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddStudent()));
-                      }),
-                  RaisedButton(
-                      child: Text('Add teacher'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddTeacher()));
-                      }),
-                  RaisedButton(
-                      child: Text('Add meal and meal list '),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => AddMeal()));
-                      }),
-                  RaisedButton(
-                      child: Text('Fees List and approve'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ApproveFees()));
-                      }),
-                  RaisedButton(
-                      child: Text('Add attendace'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectClass(
-                                      isHomework: false,
-                                      isViewHomework: false,
-                                      isPromotion: false,
-                                    )));
-                      }),
-                  RaisedButton(
-                      child: Text('Teacher List'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TeacherList()));
-                      }),
-                  RaisedButton(
-                      child: Text('Add teacher attendance'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddTeacherAttendance()));
-                      }),
-                  RaisedButton(
-                      child: Text('Add homework'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectClass(
-                                      isHomework: true,
-                                      isViewHomework: false,
-                                      isPromotion: false,
-                                    )));
-                      }),
-                  RaisedButton(
-                      child: Text('View homework'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectClass(
-                                      isHomework: false,
-                                      isViewHomework: true,
-                                      isPromotion: false,
-                                    )));
-                      }),
-                  RaisedButton(
-                      child: Text('View meal'),
-                      onPressed: () {
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      getActionButton('view_meal_b.png', 'Meal', () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ViewMeal()));
                       }),
-                  RaisedButton(
-                      child: Text('Login Page'),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
-                      }),
+                      getActionButton(
+                        'search_student.png',
+                        'Search Student',
+                        () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SearchStudent(isEdit: false)));
+                        },
+                      ),
+                      // getActionButton(
+                      //   'approve_fees.png',
+                      //   'Manage Account',
+                      //   () {
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) => ApproveFees()));
+                      //   },
+                      // ),
+                    ],
+                  ),
+                  // RaisedButton(
+                  //     child: const Text('Add Student'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => AddStudent()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: const Text('Chat Screen'),
+                  //     onPressed: () {
+                  //       Navigator.push(context,
+                  //           MaterialPageRoute(builder: (context) => Home()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('All Parents'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => ParentsList()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Add Fees'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => AddStudent()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Add teacher'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => AddTeacher()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Add meal and meal list '),
+                  //     onPressed: () {
+                  //       Navigator.push(context,
+                  //           MaterialPageRoute(builder: (context) => AddMeal()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Fees List and approve'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => ApproveFees()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Add attendace'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => SelectClass(
+                  //                     isHomework: false,
+                  //                     isViewHomework: false,
+                  //                     isPromotion: false,
+                  //                   )));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Teacher List'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => TeacherList()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Add teacher attendance'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => AddTeacherAttendance()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Add homework'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => SelectClass(
+                  //                     isHomework: true,
+                  //                     isViewHomework: false,
+                  //                     isPromotion: false,
+                  //                   )));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('View homework'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => SelectClass(
+                  //                     isHomework: false,
+                  //                     isViewHomework: true,
+                  //                     isPromotion: false,
+                  //                   )));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('View meal'),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => ViewMeal()));
+                  //     }),
+                  // RaisedButton(
+                  //     child: Text('Login Page'),
+                  //     onPressed: () {
+                  //       Navigator.push(context,
+                  //           MaterialPageRoute(builder: (context) => Login()));
+                  //     }),
                 ],
               ),
             ),
@@ -398,15 +491,15 @@ class _MyHomePageState extends State<AdminHomePage> {
       child: Card(
         elevation: 5,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  height: 80,
-                  width: 80,
+                  height: MediaQuery.of(context).size.width / 5,
+                  width: MediaQuery.of(context).size.width / 5,
                   child: Image.asset(
                     'assets/images/$imgName',
                     fit: BoxFit.fill,

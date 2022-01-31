@@ -121,12 +121,6 @@ class _AddHomeworkState extends State<AddHomework> {
                           hintText: 'Enter Remark',
                           labelText: 'Remark',
                         ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter some value';
-                          }
-                          return null;
-                        },
                         onSaved: (newValue) {
                           remark = newValue!;
                         },

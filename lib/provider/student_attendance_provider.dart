@@ -36,17 +36,42 @@ class StudentAttendanceProvider with ChangeNotifier {
     });
   }
 
+  // StudentAttendanceModel getAttendance(String date, String standard){
+
+  //   return _studentAttendance.firstWhere((element) {
+
+  //   })
+  // }
+
   Future<void> fetAndSetStudentAttendance() async {
     try {
       final resopnse = await http.get(Uri.parse(studentAttendanceUrl));
       final data = json.decode(resopnse.body) as Map<String, dynamic>;
       final List<StudentAttendanceModel> loadedStudentAttendance = [];
+      List<Map<String, String>> docs(List<dynamic> li) {
+        List<Map<String, String>> ls = [];
+        li.forEach((element) {
+          ls.add(
+            {
+              'name': element['name'],
+              'student_id': element['student_id'],
+              'parent_id': element['parent_id']
+            },
+          );
+        });
+        return ls;
+      }
+
       data.forEach((key, value) {
         loadedStudentAttendance.add(StudentAttendanceModel(
           id: key,
           teacherId: value['teacher_id'],
-          absentChildren: value['absent_children'],
-          presentChildren: value['present_children'],
+          absentChildren: value['absent_children'] == null
+              ? []
+              : docs(value['absent_children']),
+          presentChildren: value['present_children'] == null
+              ? []
+              : docs(value['present_children']),
           dateTime: value['date_time'],
           standard: value['standard'],
         ));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:narayandas_app/chat/chat_home.dart';
 import 'package:narayandas_app/teacher/t_home_page.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
@@ -13,10 +14,9 @@ class TeacherHomePage extends StatefulWidget {
 
 class _TeacherHomePageState extends State<TeacherHomePage> {
   int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
+  List<Widget> _widgetOptions = <Widget>[
     THomePage(),
-    Text('Search Page',
-        style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    Home(),
     Text('Profile Page',
         style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
   ];

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:narayandas_app/model/teacher_model.dart';
 import 'package:narayandas_app/provider/teacher_provider.dart';
@@ -30,10 +31,21 @@ class _AddTeacherState extends State<AddTeacher> {
   bool isLoading = false;
   TextEditingController t5 = TextEditingController();
   TextEditingController t1 = TextEditingController();
+  TextEditingController t2 = TextEditingController();
+  TextEditingController t3 = TextEditingController();
+  TextEditingController t4 = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
+
+  bool canEditMeal = false;
+  bool canAddFees = false;
+  bool canAddStudent = false;
+  bool canAddGallery = false;
+  bool canPromoteClass = false;
+
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-    final _formKey2 = GlobalKey<FormState>();
     return Scaffold(
       appBar: getAppBar('Add Teacher', context),
       body: isLoading
@@ -49,6 +61,7 @@ class _AddTeacherState extends State<AddTeacher> {
                     children: [
                       getBoldText('Enter Details', 16, MyColors.blueColor),
                       TextFormField(
+                        controller: t1,
                         keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
                           icon: Icon(
@@ -69,6 +82,7 @@ class _AddTeacherState extends State<AddTeacher> {
                         },
                       ),
                       TextFormField(
+                        controller: t2,
                         decoration: const InputDecoration(
                           icon: Icon(
                             Icons.map,
@@ -88,6 +102,7 @@ class _AddTeacherState extends State<AddTeacher> {
                         },
                       ),
                       TextFormField(
+                        controller: t3,
                         decoration: const InputDecoration(
                           icon: Icon(
                             Icons.phone,
@@ -110,124 +125,150 @@ class _AddTeacherState extends State<AddTeacher> {
                         height: 20,
                       ),
                       getBoldText('Upload Documents', 16, MyColors.blueColor),
+                      SizedBox(
+                        height: 10,
+                      ),
                       documents.isNotEmpty
-                          ? ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: documents.length,
-                              itemBuilder: (context, indexx) {
-                                return Row(
-                                  children: [
-                                    getNormalText(
-                                        documents[indexx]['doc_name']!,
-                                        15,
-                                        Colors.black),
-                                  ],
-                                );
-                              })
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: documents.length,
+                                  itemBuilder: (context, indexx) {
+                                    return Row(
+                                      children: [
+                                        getNormalText(
+                                            documents[indexx]['doc_name']!,
+                                            15,
+                                            Colors.black),
+                                      ],
+                                    );
+                                  }),
+                            )
                           : Container(
                               height: 0,
                             ),
-                      Column(
-                        // mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Form(
-                            key: _formKey2,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextFormField(
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Please enter some text';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (newValue) {
-                                    docName = newValue!;
-                                  },
-                                  controller: t5,
-                                  decoration: InputDecoration(
-                                      hintText: "Document name"),
-                                ),
-                                file == null
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 10.0),
-                                        child: Row(
-                                          children: [
-                                            file == null
-                                                ? Container()
-                                                : Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.75,
-                                                    child: getNormalText(
-                                                        file!.name,
-                                                        12,
-                                                        Colors.black),
-                                                  ),
-                                            file == null
-                                                ? Container(
-                                                    height: 0,
-                                                  )
-                                                : IconButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        file = null;
-                                                      });
-                                                    },
-                                                    icon: Icon(Icons.delete))
-                                          ],
-                                        ),
-                                      )
-                                    : Container(
-                                        height: 0,
-                                      ),
-                                file == null
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          GestureDetector(
-                                              onTap: () {
-                                                selectImageCamera();
-                                              },
-                                              child: getNormalText(
-                                                  'Camera', 14, Colors.blue)),
-                                          GestureDetector(
-                                              onTap: () {
-                                                selectImageGallery();
-                                              },
-                                              child: getNormalText(
-                                                  'Gallery', 14, Colors.blue)),
-                                        ],
-                                      )
-                                    : Container(
-                                        height: 0,
-                                      ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                        ],
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          _formKey2.currentState!.save();
-                          uploadImage();
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          // mainAxisSize: MainAxisSize.min,
                           children: [
-                            getNormalText('Add Document', 14, Colors.lightBlue)
+                            Form(
+                              key: _formKey2,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextFormField(
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter some text';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (newValue) {
+                                      docName = newValue!;
+                                    },
+                                    controller: t5,
+                                    decoration: InputDecoration(
+                                        hintText: "Document name"),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  file != null
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 0.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.25,
+                                                child: Image.file(
+                                                    File(file!.path)),
+                                              ),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      file = null;
+                                                    });
+                                                  },
+                                                  icon: Icon(Icons.delete))
+                                            ],
+                                          ),
+                                        )
+                                      : Container(
+                                          height: 0,
+                                        ),
+                                  file == null
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            GestureDetector(
+                                                onTap: () {
+                                                  selectImageCamera();
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.all(8),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.amber,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            3),
+                                                  ),
+                                                  child: getBoldText('Camera',
+                                                      14, Colors.white),
+                                                )),
+                                            GestureDetector(
+                                                onTap: () {
+                                                  selectImageGallery();
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.all(8),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.amber,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            3),
+                                                  ),
+                                                  child: getBoldText('Gallery',
+                                                      14, Colors.white),
+                                                )),
+                                          ],
+                                        )
+                                      : Container(
+                                          height: 0,
+                                        ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _formKey2.currentState!.save();
+                                      uploadImage();
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        getNormalText('Add Document', 14,
+                                            Colors.lightBlue)
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
                           ],
                         ),
                       ),
@@ -297,10 +338,58 @@ class _AddTeacherState extends State<AddTeacher> {
                       //     totalFees = int.parse(newValue!);
                       //   },
                       // ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            canEditMeal = val;
+                          });
+                        },
+                        'Edit Meal',
+                        canEditMeal,
+                      ),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            canAddFees = val;
+                          });
+                        },
+                        'Add Fees',
+                        canAddFees,
+                      ),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            canAddStudent = val;
+                          });
+                        },
+                        'Add Student',
+                        canAddStudent,
+                      ),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            canAddGallery = val;
+                          });
+                        },
+                        'Add Gallery',
+                        canAddGallery,
+                      ),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            canPromoteClass = val;
+                          });
+                        },
+                        'Promote Class',
+                        canPromoteClass,
+                      ),
 
                       Container(
                         alignment: Alignment.center,
-                        padding: const EdgeInsets.only(top: 20.0),
+                        padding: const EdgeInsets.only(top: 10.0),
                         child: RaisedButton(
                           shape: StadiumBorder(),
                           color: MyColors.blueColor,
@@ -330,6 +419,11 @@ class _AddTeacherState extends State<AddTeacher> {
                                 document: documents,
                                 datetime: DateTime.now().toString(),
                                 isBlocked: false,
+                                canAddFees: canAddFees,
+                                canAddGallery: canAddGallery,
+                                canAddStudent: canAddStudent,
+                                canEditMeal: canEditMeal,
+                                canPromoteClass: canPromoteClass,
                               );
                               teacherProvider
                                   .addTeacher(newTeacher)
@@ -361,6 +455,30 @@ class _AddTeacherState extends State<AddTeacher> {
                 ),
               ),
             ),
+    );
+  }
+
+  getSwitchButton(var voidCallback, String title, bool status) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          getBoldText(title, 14, Colors.black),
+          FlutterSwitch(
+            activeColor: MyColors.blueColor,
+            width: 50.0,
+            height: 22.0,
+            valueFontSize: 10.0,
+            toggleSize: 18.0,
+            value: status,
+            borderRadius: 30.0,
+            padding: 3,
+            showOnOff: true,
+            onToggle: voidCallback,
+          ),
+        ],
+      ),
     );
   }
 
@@ -409,6 +527,7 @@ class _AddTeacherState extends State<AddTeacher> {
     };
     setState(() {
       documents.add(document);
+      _formKey2.currentState!.reset();
       t5.clear();
     });
     // saveForm(urlDownload);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:narayandas_app/model/teacher_model.dart';
 import 'package:narayandas_app/provider/teacher_provider.dart';
 import 'package:narayandas_app/utils/colors.dart';
@@ -25,6 +26,13 @@ class _EditTeacherState extends State<EditTeacher> {
   final TextEditingController t4 = TextEditingController();
   final TextEditingController t5 = TextEditingController();
   bool isLoading = false;
+  bool canEditMeal = false;
+  bool canAddFees = false;
+  bool canAddStudent = false;
+  bool canAddGallery = false;
+  bool canPromoteClass = false;
+  bool isBlocked = false;
+
   @override
   void initState() {
     t1.text = widget.teacherModel.name;
@@ -32,6 +40,13 @@ class _EditTeacherState extends State<EditTeacher> {
     t3.text = widget.teacherModel.password;
     t4.text = widget.teacherModel.address;
     t5.text = widget.teacherModel.phone;
+    canEditMeal = widget.teacherModel.canEditMeal;
+    canAddFees = widget.teacherModel.canAddFees;
+    canAddStudent = widget.teacherModel.canAddStudent;
+    canAddGallery = widget.teacherModel.canAddGallery;
+    canPromoteClass = widget.teacherModel.canPromoteClass;
+    isBlocked = widget.teacherModel.isBlocked;
+
     super.initState();
   }
 
@@ -180,6 +195,55 @@ class _EditTeacherState extends State<EditTeacher> {
                       //     totalFees = int.parse(newValue!);
                       //   },
                       // ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      getSwitchButton((val) {
+                        setState(() {
+                          canEditMeal = val;
+                        });
+                      }, 'Edit Meal', canEditMeal),
+                      getSwitchButton((val) {
+                        setState(() {
+                          canAddFees = val;
+                        });
+                      }, 'Add Fees', canAddFees),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            canAddStudent = val;
+                          });
+                        },
+                        'Add Student',
+                        canAddStudent,
+                      ),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            canAddGallery = val;
+                          });
+                        },
+                        'Add Gallery',
+                        canAddGallery,
+                      ),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            canPromoteClass = val;
+                          });
+                        },
+                        'Promote Class',
+                        canPromoteClass,
+                      ),
+                      getSwitchButton(
+                        (val) {
+                          setState(() {
+                            isBlocked = val;
+                          });
+                        },
+                        'Block User',
+                        isBlocked,
+                      ),
                       Container(
                         alignment: Alignment.center,
                         padding: const EdgeInsets.only(top: 20.0),
@@ -202,17 +266,21 @@ class _EditTeacherState extends State<EditTeacher> {
                               });
                               _formKey.currentState!.save();
                               var newTeacher = TeacherModel(
-                                id: widget.teacherModel.id,
-                                email: email,
-                                password: password,
-                                name: name,
-                                address: address,
-                                phone: mobileNumber,
-                                oneSignalId: widget.teacherModel.oneSignalId,
-                                document: [],
-                                datetime: DateTime.now().toString(),
-                                isBlocked: false,
-                              );
+                                  id: widget.teacherModel.id,
+                                  email: email,
+                                  password: password,
+                                  name: name,
+                                  address: address,
+                                  phone: mobileNumber,
+                                  oneSignalId: widget.teacherModel.oneSignalId,
+                                  document: [],
+                                  datetime: DateTime.now().toString(),
+                                  isBlocked: isBlocked,
+                                  canAddFees: canAddFees,
+                                  canAddGallery: canAddGallery,
+                                  canAddStudent: canAddStudent,
+                                  canEditMeal: canEditMeal,
+                                  canPromoteClass: canPromoteClass);
                               teacherProvider
                                   .updateTeacher(
                                       widget.teacherModel.id, newTeacher)
@@ -244,6 +312,30 @@ class _EditTeacherState extends State<EditTeacher> {
                 ),
               ),
             ),
+    );
+  }
+
+  getSwitchButton(var voidCallback, String title, bool status) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          getBoldText(title, 14, Colors.black),
+          FlutterSwitch(
+            activeColor: MyColors.blueColor,
+            width: 50.0,
+            height: 22.0,
+            valueFontSize: 10.0,
+            toggleSize: 18.0,
+            value: status,
+            borderRadius: 30.0,
+            padding: 3,
+            showOnOff: true,
+            onToggle: voidCallback,
+          ),
+        ],
+      ),
     );
   }
 }

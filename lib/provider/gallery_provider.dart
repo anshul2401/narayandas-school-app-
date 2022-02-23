@@ -38,24 +38,21 @@ class GalleryProvider with ChangeNotifier {
     }
   }
 
-  // Future<void> updateMeal(String id, MealModel mealModel) async {
-  //   final index = _meals.indexWhere((c) => c.id == id);
-  //   if (index >= 0) {
-  //     try {
-  //       var url = baseUrl + 'meals/$id.json';
-  //       await http.patch(Uri.parse(url),
-  //           body: json.encode({
-  //             'day': mealModel.day,
-  //             'meal': mealModel.meal,
-  //             'benifit': mealModel.benifit
-  //           }));
-  //       _meals[index] = mealModel;
-  //       notifyListeners();
-  //     } catch (e) {
-  //       throw (e);
-  //     }
-  //   } else {
-  //     print('...');
-  //   }
-  // }
+  Future<void> deleteGallery(String id) async {
+    final index = _gallery.indexWhere((c) => c.id == id);
+    if (index >= 0) {
+      try {
+        var url = baseUrl + 'gallery/$id.json';
+        await http.delete(
+          Uri.parse(url),
+        );
+        _gallery.removeAt(index);
+        notifyListeners();
+      } catch (e) {
+        throw (e);
+      }
+    } else {
+      print('...');
+    }
+  }
 }

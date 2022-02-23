@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/admin/add_fees.dart';
 import 'package:narayandas_app/admin/edit_teacher.dart';
+import 'package:narayandas_app/admin/view_teacher_details.dart';
 import 'package:narayandas_app/model/parent_model.dart';
 import 'package:narayandas_app/model/teacher_model.dart';
 import 'package:narayandas_app/provider/parents_provider.dart';
@@ -82,8 +83,20 @@ class _TeacherListState extends State<TeacherList> {
                                           Colors.black),
                                       getNormalText(teachers[index].phone, 13,
                                           Colors.grey),
-                                      getNormalText(
-                                          'View Profile', 14, Colors.blue)
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ViewTeacherDetails(
+                                                          teacherModel:
+                                                              teachers[
+                                                                  index])));
+                                        },
+                                        child: getNormalText(
+                                            'View Profile', 14, Colors.blue),
+                                      )
                                     ],
                                   ),
                                   Spacer(),

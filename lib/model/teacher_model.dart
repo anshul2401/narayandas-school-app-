@@ -9,6 +9,11 @@ class TeacherModel {
   late String datetime;
   late List<Map<String, String>> document;
   late bool isBlocked;
+  late bool canEditMeal;
+  late bool canAddFees;
+  late bool canAddStudent;
+  late bool canAddGallery;
+  late bool canPromoteClass;
   TeacherModel({
     required this.id,
     required this.name,
@@ -20,5 +25,10 @@ class TeacherModel {
     required this.datetime,
     required this.document,
     required this.isBlocked,
+    required this.canAddFees,
+    required this.canAddGallery,
+    required this.canAddStudent,
+    required this.canEditMeal,
+    required this.canPromoteClass,
   });
 }

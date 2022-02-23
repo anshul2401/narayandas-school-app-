@@ -80,4 +80,10 @@ class FeesProvider with ChangeNotifier {
       print('...');
     }
   }
+
+  List<FeesModel> getApprovedFees() {
+    return _fees.where((element) {
+      return element.isApprovedByAdmin == true;
+    }).toList();
+  }
 }

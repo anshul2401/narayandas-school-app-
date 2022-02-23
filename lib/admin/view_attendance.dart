@@ -60,7 +60,7 @@ class _ViewAttendanceState extends State<ViewAttendance> {
 
     todayAttendance = getAttendance();
     return Scaffold(
-      appBar: getAppBar('Add attendance', context),
+      appBar: getAppBar('View attendance', context),
       body: isLoading
           ? getLoading(context)
           : SingleChildScrollView(
@@ -110,12 +110,15 @@ class _ViewAttendanceState extends State<ViewAttendance> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.start,
                                             children: [
                                               getBoldText(
                                                   (index + 1).toString(),
                                                   15,
                                                   Colors.black),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
                                               getNormalText(data['name'], 14,
                                                   Colors.black),
                                             ],

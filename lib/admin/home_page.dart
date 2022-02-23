@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/admin/account.dart';
+import 'package:narayandas_app/admin/account_panel.dart';
 import 'package:narayandas_app/admin/add_gallery_image.dart';
 import 'package:narayandas_app/admin/add_meal.dart';
+import 'package:narayandas_app/admin/add_notification.dart';
+import 'package:narayandas_app/admin/add_parent_details.dart';
+import 'package:narayandas_app/admin/add_story.dart';
 import 'package:narayandas_app/admin/add_student.dart';
 import 'package:narayandas_app/admin/add_teacher.dart';
 import 'package:narayandas_app/admin/add_teacher_attendance.dart';
 import 'package:narayandas_app/admin/approve_fees.dart';
+import 'package:narayandas_app/admin/menu/menu_item.dart';
+import 'package:narayandas_app/admin/parent_panel.dart';
 import 'package:narayandas_app/admin/parents_list.dart';
 import 'package:narayandas_app/admin/search_parent.dart';
 import 'package:narayandas_app/admin/search_student.dart';
 import 'package:narayandas_app/admin/select_class.dart';
+import 'package:narayandas_app/admin/student_panel.dart';
 import 'package:narayandas_app/admin/teacher_list.dart';
+import 'package:narayandas_app/admin/teacher_panel.dart';
 import 'package:narayandas_app/admin/view_meal.dart';
+import 'package:narayandas_app/admin/view_teacher_attendance.dart';
 import 'package:narayandas_app/chat/chat_home.dart';
 import 'package:narayandas_app/chat/chatscreen.dart';
+import 'package:narayandas_app/chat2/page/chats_page.dart';
 import 'package:narayandas_app/login.dart';
 import 'package:narayandas_app/provider/account_provider.dart';
 import 'package:narayandas_app/provider/fees_provider.dart';
@@ -142,343 +152,125 @@ class _MyHomePageState extends State<AdminHomePage> {
       body: isLoading
           ? getLoading(context)
           : SingleChildScrollView(
-              child: Column(
-                children: [
-                  // getNormalText(hh, 15, Colors.black),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      getActionButton('add_student_attendance_b.png',
-                          'Add Student attendance', () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectClass(
-                                      isHomework: false,
-                                      isViewHomework: false,
-                                      isPromotion: false,
-                                      isViewAttendance: false,
-                                    )));
-                      }),
-                      getActionButton('add_teacher_attendance_b.png',
-                          'Add Teacher attendance', () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddTeacherAttendance()));
-                      }),
-                      getActionButton(
-                        'edit_teacher.png',
-                        'View Attendance',
-                        () {
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    // getNormalText(hh, 15, Colors.black),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        getActionButtonTwo('student2.png', 'Student', () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SelectClass(
-                                        isHomework: false,
-                                        isViewHomework: false,
-                                        isPromotion: false,
-                                        isViewAttendance: true,
-                                      )));
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      getActionButton('view_homework_b.png', ' Homework', () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectClass(
-                                      isHomework: false,
-                                      isViewHomework: true,
-                                      isPromotion: false,
-                                      isViewAttendance: false,
-                                    )));
-                      }),
-                      getActionButton('add_homework_b.png', 'Add Homework', () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectClass(
-                                      isHomework: true,
-                                      isViewHomework: false,
-                                      isPromotion: false,
-                                      isViewAttendance: false,
-                                    )));
-                      }),
-                      getActionButton('edit_meal_b.png', 'Add/Edit Meal', () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => AddMeal()));
-                      }),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      getActionButton(
-                        'new_admission.png',
-                        ' New Admission',
-                        () {
+                                  builder: (context) => StudentPanel()));
+                        }),
+                        getActionButtonTwo(
+                          'teacher2.png',
+                          'Teacher',
+                          () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TeacherPanel()));
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        getActionButtonTwo('parent2.png', 'Parent', () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AddStudent()));
-                        },
-                      ),
-                      getActionButton(
-                        'add_teacher.png',
-                        'Add Teacher',
-                        () {
+                                  builder: (context) => ParentPanel()));
+                        }),
+                        getActionButtonTwo(
+                          'account.png',
+                          'Account',
+                          () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AccountPanel()));
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        getActionButtonTwo('edit_meal_b.png', 'Meal', () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AddTeacher()));
-                        },
-                      ),
-                      getActionButton(
-                        'add_fees_b.png',
-                        'Add Fees',
-                        () {
+                                  builder: (context) => AddMeal()));
+                        }),
+                        getActionButtonTwo(
+                          'chat.png',
+                          'Chat',
+                          () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatsPage()));
+                          },
+                        ),
+                      ],
+                    ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        getActionButtonTwo(
+                          'gallery2.png',
+                          'Gallery',
+                          () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddGalleryImage()));
+                          },
+                        ),
+                        getActionButtonTwo(
+                            'add_notification.png', 'Add Notification', () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SearchParent(
-                                        isEdit: false,
-                                      )));
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      getActionButton(
-                        'gallery.png',
-                        'Add Gallery',
-                        () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddGalleryImage()));
-                        },
-                      ),
-                      getActionButton(
-                        'promote_class_b.png',
-                        'Promote Class',
-                        () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SelectClass(
-                                        isHomework: false,
-                                        isViewHomework: false,
-                                        isPromotion: true,
-                                        isViewAttendance: false,
-                                      )));
-                        },
-                      ),
-                      getActionButton(
-                        'approve_fees.png',
-                        'Approve Fees',
-                        () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ApproveFees()));
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      getActionButton(
-                        'edit_teacher.png',
-                        'Edit Teacher',
-                        () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TeacherList()));
-                        },
-                      ),
-                      getActionButton(
-                        'edit_teacher.png',
-                        'Edit Parent',
-                        () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SearchParent(isEdit: true)));
-                        },
-                      ),
-                      getActionButton(
-                        'approve_fees.png',
-                        'Manage Account',
-                        () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Account()));
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      getActionButton('view_meal_b.png', 'Meal', () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ViewMeal()));
-                      }),
-                      getActionButton(
-                        'search_student.png',
-                        'Search Student',
-                        () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SearchStudent(isEdit: false)));
-                        },
-                      ),
-                      // getActionButton(
-                      //   'approve_fees.png',
-                      //   'Manage Account',
-                      //   () {
-                      //     Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //             builder: (context) => ApproveFees()));
-                      //   },
-                      // ),
-                    ],
-                  ),
-                  // RaisedButton(
-                  //     child: const Text('Add Student'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => AddStudent()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: const Text('Chat Screen'),
-                  //     onPressed: () {
-                  //       Navigator.push(context,
-                  //           MaterialPageRoute(builder: (context) => Home()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('All Parents'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => ParentsList()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Add Fees'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => AddStudent()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Add teacher'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => AddTeacher()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Add meal and meal list '),
-                  //     onPressed: () {
-                  //       Navigator.push(context,
-                  //           MaterialPageRoute(builder: (context) => AddMeal()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Fees List and approve'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => ApproveFees()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Add attendace'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => SelectClass(
-                  //                     isHomework: false,
-                  //                     isViewHomework: false,
-                  //                     isPromotion: false,
-                  //                   )));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Teacher List'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => TeacherList()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Add teacher attendance'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => AddTeacherAttendance()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Add homework'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => SelectClass(
-                  //                     isHomework: true,
-                  //                     isViewHomework: false,
-                  //                     isPromotion: false,
-                  //                   )));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('View homework'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => SelectClass(
-                  //                     isHomework: false,
-                  //                     isViewHomework: true,
-                  //                     isPromotion: false,
-                  //                   )));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('View meal'),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => ViewMeal()));
-                  //     }),
-                  // RaisedButton(
-                  //     child: Text('Login Page'),
-                  //     onPressed: () {
-                  //       Navigator.push(context,
-                  //           MaterialPageRoute(builder: (context) => Login()));
-                  //     }),
-                ],
+                                  builder: (context) => AddNotification()));
+                        }),
+                      ],
+                    ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        getActionButtonTwo(
+                          'edit_teacher.png',
+                          'Menu',
+                          () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MenuItem()));
+                          },
+                        ),
+                        getActionButtonTwo(
+                          'story.png',
+                          'Add Story',
+                          () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddStory()));
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
     );
@@ -519,6 +311,49 @@ class _MyHomePageState extends State<AdminHomePage> {
                   Colors.black,
                 ),
               )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget getActionButtonTwo(
+      String imgName, String text, VoidCallback onVoidCallback) {
+    return GestureDetector(
+      onTap: onVoidCallback,
+      child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: MediaQuery.of(context).size.width * 0.35,
+                  width: MediaQuery.of(context).size.width * 0.35,
+                  child: Image.asset(
+                    'assets/images/$imgName',
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: MyColors.blueColor.withOpacity(0.9),
+                ),
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width * 0.35,
+                height: 30,
+                child: getBoldTextCenter(
+                  text,
+                  14,
+                  Colors.white,
+                ),
+              ),
             ],
           ),
         ),

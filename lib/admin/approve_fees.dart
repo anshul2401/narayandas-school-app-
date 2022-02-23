@@ -208,46 +208,51 @@ class _ApproveFeesState extends State<ApproveFees> {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.white10,
-                      border: Border.all(color: Colors.black, width: 0.5),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              getBoldText(
-                                  formatDateTimeWithTime(
-                                      approvedFees[index].dateTime),
-                                  14,
-                                  MyColors.blueColor),
-                              getNormalText(
-                                  approvedFees[index].remark, 13, Colors.black),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                child: Column(
+                  children: [
+                    Container(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        // decoration: BoxDecoration(
+                        //   color: Colors.white10,
+                        //   border: Border.all(color: Colors.black, width: 0.5),
+                        //   borderRadius: BorderRadius.circular(5),
+                        // ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            getBoldText(
-                              '₹ ' + approvedFees[index].amount.toString(),
-                              15,
-                              Colors.green,
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.7,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  getBoldText(
+                                      formatDateTimeWithTime(
+                                          approvedFees[index].dateTime),
+                                      14,
+                                      MyColors.blueColor),
+                                  getNormalText(approvedFees[index].remark, 13,
+                                      Colors.black),
+                                ],
+                              ),
                             ),
-                            getNormalText(approvedFees[index].modeOfPayment, 12,
-                                Colors.black),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                getBoldText(
+                                  '₹ ' + approvedFees[index].amount.toString(),
+                                  15,
+                                  Colors.green,
+                                ),
+                                getNormalText(approvedFees[index].modeOfPayment,
+                                    12, Colors.black),
+                              ],
+                            )
                           ],
-                        )
-                      ],
-                    )),
+                        )),
+                    Divider(),
+                  ],
+                ),
               );
             }),
       ),

@@ -23,8 +23,41 @@ class _AddTeacherAttendanceState extends State<AddTeacherAttendance> {
   bool isLoading = false;
   List<TeacherModel> presentTeachers = [];
   List<TeacherModel> absentTeachers = [];
+  List<TeacherAttendanceModel> teacherAttendance = [];
+
+  @override
+  void initState() {
+    setState(() {
+      isLoading = true;
+    });
+
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<TeacherAttendanceProvider>(context, listen: false)
+          .fetAndSetTeacherAttendance()
+          .then((value) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isTaken = false;
+    var st = Provider.of<TeacherAttendanceProvider>(context, listen: false);
+    teacherAttendance.addAll(st.teacherAttendance);
+    teacherAttendance.forEach((element) {
+      if (formatDateTime(element.dateTime) ==
+          formatDateTime(DateTime.now().toString())) {
+        setState(() {
+          isTaken = true;
+        });
+      }
+    });
+
     var teacherProvider = Provider.of<TeacherProvider>(context);
     List<TeacherModel> teachers = teacherProvider.teacher;
 
@@ -50,38 +83,44 @@ class _AddTeacherAttendanceState extends State<AddTeacherAttendance> {
                     SizedBox(
                       height: 10,
                     ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: teachers.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                presentTeachers.contains(teachers[index])
-                                    ? presentTeachers.remove(teachers[index])
-                                    : presentTeachers.add(teachers[index]);
-                              });
-                            },
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    getBoldText((index + 1).toString(), 15,
-                                        Colors.black),
-                                    getNormalText(
-                                        teachers[index].name, 14, Colors.black),
+                    isTaken
+                        ? getNormalText(
+                            'Attendance already taken', 16, Colors.grey)
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: teachers.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
                                     presentTeachers.contains(teachers[index])
-                                        ? Icon(Icons.check_box)
-                                        : Icon(Icons.check_box_outline_blank)
-                                  ],
+                                        ? presentTeachers
+                                            .remove(teachers[index])
+                                        : presentTeachers.add(teachers[index]);
+                                  });
+                                },
+                                child: Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        getBoldText((index + 1).toString(), 15,
+                                            Colors.black),
+                                        getNormalText(teachers[index].name, 14,
+                                            Colors.black),
+                                        presentTeachers
+                                                .contains(teachers[index])
+                                            ? Icon(Icons.check_box)
+                                            : Icon(
+                                                Icons.check_box_outline_blank)
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }),
+                              );
+                            }),
                     SizedBox(
                       height: 10,
                     ),
@@ -96,12 +135,12 @@ class _AddTeacherAttendanceState extends State<AddTeacherAttendance> {
                             presentTeachers.contains(e)
                                 ? presentTeacherMap.add({
                                     'name': e.name,
-                                    'student_id': e.id,
+                                    'teacher_id': e.id,
                                     'one_signal_id': e.oneSignalId
                                   })
                                 : absentTeacherMap.add({
                                     'name': e.name,
-                                    'student_id': e.id,
+                                    'teacher_id': e.id,
                                     'one_signal_id': e.oneSignalId
                                   });
                           });

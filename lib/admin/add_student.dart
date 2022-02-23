@@ -9,10 +9,10 @@ import 'package:narayandas_app/provider/parents_provider.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:provider/provider.dart';
-import 'package:narayandas_app/utils/helper.dart';
 
 class AddStudent extends StatefulWidget {
-  const AddStudent({Key? key}) : super(key: key);
+  final ParentModel parentModel;
+  const AddStudent({Key? key, required this.parentModel}) : super(key: key);
 
   @override
   _AddStudentState createState() => _AddStudentState();
@@ -20,14 +20,7 @@ class AddStudent extends StatefulWidget {
 
 class _AddStudentState extends State<AddStudent> {
   bool isLoading = false;
-  late String fatherName = '';
-  late String motherName = '';
-  late String address = '';
-  late String mobileNumber = '';
-  late int totalFees = 0;
   List<ChildModel> children = [];
-  late String email = '';
-  late String password = '';
   final TextEditingController _textFieldController = TextEditingController();
   final TextEditingController _textFieldController2 = TextEditingController();
   final TextEditingController _textFieldController3 = TextEditingController();
@@ -46,6 +39,8 @@ class _AddStudentState extends State<AddStudent> {
   XFile? file;
   UploadTask? task;
   final ImagePicker _picker = ImagePicker();
+  var _form = GlobalKey<FormState>();
+  var _form2 = GlobalKey<FormState>();
 
   List<String> standardList = [
     'PPlay Group',
@@ -65,287 +60,6 @@ class _AddStudentState extends State<AddStudent> {
     'Class 11',
     'Class 12',
   ];
-  Future<void> _displayTextInputDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setStatee) {
-            return AlertDialog(
-              title: Text('Add Student Details'),
-              content: Container(
-                // height: 300,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      onChanged: (value) {
-                        setState(
-                          () {
-                            studentName = value;
-                          },
-                        );
-                      },
-                      controller: _textFieldController,
-                      decoration: InputDecoration(hintText: "Name"),
-                    ),
-                    TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          dob = value;
-                        });
-                      },
-                      keyboardType: TextInputType.datetime,
-                      controller: _textFieldController2,
-                      decoration: InputDecoration(hintText: "Dob"),
-                    ),
-                    TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          bloodGroup = value;
-                        });
-                      },
-                      keyboardType: TextInputType.text,
-                      controller: _textFieldController3,
-                      decoration: InputDecoration(
-                        hintText: "Blood Group",
-                      ),
-                    ),
-                    // TextField(
-                    //   onChanged: (value) {
-                    //     setState(() {
-                    //       standard = value;
-                    //     });
-                    //   },
-                    //   keyboardType: TextInputType.number,
-                    //   controller: _textFieldController4,
-                    //   decoration: InputDecoration(
-                    //     hintText: "Standard",
-                    //   ),
-                    // ),
-                    // TextField(
-                    //   onChanged: (value) {
-                    //     setState(() {
-                    //       gender = value;
-                    //     });
-                    //   },
-                    //   keyboardType: TextInputType.text,
-                    //   controller: _textFieldController7,
-                    //   decoration: InputDecoration(
-                    //     hintText: "Gender",
-                    //   ),
-                    // ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DropdownButton<String>(
-                          alignment: Alignment.bottomCenter,
-                          focusColor: Colors.white,
-                          value: standard,
-
-                          //elevation: 5,
-                          style: TextStyle(color: Colors.white),
-                          iconEnabledColor: Colors.black,
-                          items: standardList.map<DropdownMenuItem<String>>(
-                            (String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              );
-                            },
-                          ).toList(),
-                          hint: Text(
-                            "Class",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          onChanged: (String? value) {
-                            setState(
-                              () {
-                                standard = value!;
-                              },
-                            );
-                            setStatee(
-                              () {
-                                standard = value!;
-                              },
-                            );
-                          },
-                        ),
-                        DropdownButton<String>(
-                          alignment: Alignment.bottomCenter,
-                          focusColor: Colors.white,
-                          value: gender,
-
-                          //elevation: 5,
-                          style: TextStyle(color: Colors.white),
-                          iconEnabledColor: Colors.black,
-                          items: ['Male', 'Female']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            );
-                          }).toList(),
-                          hint: Text(
-                            "Gender",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          onChanged: (String? value) {
-                            setState(() {
-                              gender = value!;
-                            });
-                            setStatee(() {
-                              gender = value!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  color: MyColors.blueColor,
-                  textColor: Colors.white,
-                  child: Text('Add'),
-                  onPressed: () {
-                    print(standard);
-                    setState(
-                      () {
-                        children.add(ChildModel(
-                          name: studentName,
-                          standard: standard!,
-                          documents: [],
-                          dob: dob,
-                          bloodGroup: bloodGroup,
-                          gender: gender!,
-                        ));
-                        _textFieldController.clear();
-                        _textFieldController2.clear();
-                        _textFieldController3.clear();
-                        _textFieldController4.clear();
-                        _textFieldController7.clear();
-                        documents = [];
-                        Navigator.pop(context);
-                      },
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> _displayTextInputDialogDocument(
-      BuildContext context, String name) async {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Add Document'),
-            content: Container(
-              // height: 300,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        docName = value;
-                      });
-                    },
-                    controller: _textFieldController5,
-                    decoration: InputDecoration(hintText: "Document name"),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          child: getNormalText(
-                              file == null ? '' : file!.name, 12, Colors.black),
-                        ),
-                        file == null
-                            ? Container()
-                            : IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    file = null;
-                                  });
-                                },
-                                icon: Icon(Icons.delete))
-                      ],
-                    ),
-                  ),
-                  file == null
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            GestureDetector(
-                                onTap: () {
-                                  selectImageCamera();
-                                },
-                                child:
-                                    getNormalText('Camera', 14, Colors.blue)),
-                            GestureDetector(
-                                onTap: () {
-                                  selectImageGallery();
-                                },
-                                child:
-                                    getNormalText('Gallery', 14, Colors.blue)),
-                          ],
-                        )
-                      : Container(),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  // RaisedButton(
-                  //   color: MyColors.blueColor,
-                  //   shape: StadiumBorder(),
-                  //   child: getBoldText('Upload Homework', 13, Colors.white),
-                  //   onPressed: () {
-                  //     uploadImage();
-                  //   },
-                  // )
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                color: MyColors.blueColor,
-                textColor: Colors.white,
-                child: Text('Add'),
-                onPressed: () {
-                  uploadImage(name);
-                  Navigator.pop(context);
-                  // setState(() {
-                  //   _textFieldController6.clear();
-
-                  // });
-                },
-              ),
-            ],
-          );
-        });
-  }
-
   Future selectImageCamera() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     setState(() {
@@ -360,7 +74,7 @@ class _AddStudentState extends State<AddStudent> {
     });
   }
 
-  Future uploadImage(String name) async {
+  Future uploadImage() async {
     setState(() {
       isLoading = true;
     });
@@ -390,408 +104,447 @@ class _AddStudentState extends State<AddStudent> {
       'doc_img': urlDownload,
     };
     setState(() {
-      ChildModel child = children.firstWhere((element) {
-        return element.name == name;
-      });
-      var docs = child.documents;
-      docs.add(document);
-
-      children[children.indexWhere((element) => element.name == name)] =
-          ChildModel(
-              name: child.name,
-              standard: child.standard,
-              documents: docs,
-              bloodGroup: child.bloodGroup,
-              dob: child.dob,
-              gender: child.gender);
-
+      documents.add(document);
+      _form2.currentState!.reset();
       _textFieldController5.clear();
+      // ChildModel child = children.firstWhere((element) {
+      //   return element.name == name;
+      // });
+      // var docs = child.documents;
+      // docs.add(document);
+
+      // children[children.indexWhere((element) => element.name == name)] =
+      //     ChildModel(
+      //         name: child.name,
+      //         standard: child.standard,
+      //         documents: docs,
+      //         bloodGroup: child.bloodGroup,
+      //         dob: child.dob,
+      //         gender: child.gender);
+
+      // _textFieldController5.clear();
     });
+
     // saveForm(urlDownload);
   }
 
   @override
+  void initState() {
+    children = widget.parentModel.children;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-    final _formkey2 = GlobalKey<FormState>();
     return Scaffold(
-      appBar: getAppBar('New Admission', context),
+      appBar: getAppBar('Add Student Details', context),
       body: isLoading
           ? getLoading(context)
-          : SingleChildScrollView(
-              physics: ClampingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Form(
-                  key: _formKey,
+          : Form(
+              key: _form,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      getBoldText(
-                        'Add child details',
-                        16,
-                        MyColors.blueColor,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
+                    children: [
                       ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: children.length,
                           itemBuilder: (context, index) {
                             return Container(
-                              padding: EdgeInsets.all(8),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      getBoldText((index + 1).toString(), 14,
-                                          Colors.black),
-                                      getNormalText(children[index].name, 14,
-                                          Colors.black),
-                                      getNormalText(children[index].standard,
-                                          14, Colors.black),
-                                    ],
-                                  ),
-                                  children[index].documents.isNotEmpty
-                                      ? ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount:
-                                              children[index].documents.length,
-                                          itemBuilder: (context, indexx) {
-                                            return Row(
-                                              children: [
-                                                getNormalText(
-                                                    children[index]
-                                                            .documents
-                                                            .isEmpty
-                                                        ? ""
-                                                        : children[index]
-                                                                    .documents[
-                                                                indexx]
-                                                            ['doc_name']!,
-                                                    15,
-                                                    Colors.black),
-                                              ],
-                                            );
-                                          })
-                                      : Container(
-                                          height: 0,
-                                        ),
-                                  Form(
-                                    key: _formkey2,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        TextFormField(
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return 'Please enter some text';
-                                            }
-                                            return null;
-                                          },
-                                          onSaved: (newValue) {
-                                            docName = newValue!;
-                                          },
-                                          controller: _textFieldController5,
-                                          decoration: InputDecoration(
-                                              hintText: "Document name"),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.75,
-                                                child: getNormalText(
-                                                    file == null
-                                                        ? ''
-                                                        : file!.name,
-                                                    12,
-                                                    Colors.black),
-                                              ),
-                                              file == null
-                                                  ? Container()
-                                                  : IconButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          file = null;
-                                                        });
-                                                      },
-                                                      icon: Icon(Icons.delete))
-                                            ],
-                                          ),
-                                        ),
-                                        file == null
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: [
-                                                  GestureDetector(
-                                                      onTap: () {
-                                                        selectImageCamera();
-                                                      },
-                                                      child: getNormalText(
-                                                          'Camera',
-                                                          14,
-                                                          Colors.blue)),
-                                                  GestureDetector(
-                                                      onTap: () {
-                                                        selectImageGallery();
-                                                      },
-                                                      child: getNormalText(
-                                                          'Gallery',
-                                                          14,
-                                                          Colors.blue)),
-                                                ],
-                                              )
-                                            : Container(),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        // RaisedButton(
-                                        //   color: MyColors.blueColor,
-                                        //   shape: StadiumBorder(),
-                                        //   child: getBoldText('Upload Homework', 13, Colors.white),
-                                        //   onPressed: () {
-                                        //     uploadImage();
-                                        //   },
-                                        // )
-                                      ],
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      _formkey2.currentState!.save();
-                                      uploadImage(children[index].name);
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        getNormalText('Add Document', 14,
-                                            Colors.lightBlue)
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
+                                padding: EdgeInsets.all(8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    getBoldText((index + 1).toString(), 14,
+                                        Colors.black),
+                                    getNormalText(
+                                        children[index].name, 14, Colors.black),
+                                    getNormalText(children[index].standard, 14,
+                                        Colors.black),
+                                  ],
+                                ));
                           }),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          getBoldText(
+                              'Add child details', 16, MyColors.blueColor),
+                        ],
+                      ),
+                      TextFormField(
+                        controller: _textFieldController,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.person,
+                            color: MyColors.blueColor,
+                          ),
+                          hintText: 'Name',
+                          labelText: 'Enter Name',
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) {
+                          studentName = newValue!;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _textFieldController2,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.calendar_today,
+                            color: MyColors.blueColor,
+                          ),
+                          hintText: 'DOB',
+                          labelText: 'Enter DOB',
+                        ),
+                        keyboardType: TextInputType.datetime,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) {
+                          dob = newValue!;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _textFieldController3,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.bloodtype,
+                            color: MyColors.blueColor,
+                          ),
+                          hintText: 'Blood Group',
+                          labelText: 'Enter Blood Group',
+                        ),
+                        keyboardType: TextInputType.text,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) {
+                          bloodGroup = newValue!;
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 36,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 0),
+                            decoration: BoxDecoration(
+                                color: MyColors.blueColor,
+                                borderRadius: BorderRadius.circular(10)),
+
+                            // dropdown below..
+                            child: DropdownButton<String>(
+                              alignment: Alignment.bottomCenter,
+                              hint:
+                                  getBoldTextCenter('Class', 14, Colors.white),
+                              value: standard,
+                              onChanged: (String? newValue) =>
+                                  setState(() => standard = newValue),
+                              dropdownColor:
+                                  MyColors.blueColor.withOpacity(0.8),
+                              items: standardList
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) =>
+                                          DropdownMenuItem<String>(
+                                            value: value,
+                                            child: getBoldTextCenter(
+                                                value, 14, Colors.white),
+                                          ))
+                                  .toList(),
+
+                              // add extra sugar..
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white,
+                              ),
+                              // iconSize: ,
+                              underline: SizedBox(),
+                            ),
+                          ),
+                          Container(
+                            height: 36,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 0),
+                            decoration: BoxDecoration(
+                                color: MyColors.blueColor,
+                                borderRadius: BorderRadius.circular(10)),
+
+                            // dropdown below..
+                            child: DropdownButton<String>(
+                              alignment: Alignment.bottomCenter,
+                              hint:
+                                  getBoldTextCenter('Gender', 14, Colors.white),
+                              value: gender,
+                              onChanged: (String? newValue) =>
+                                  setState(() => gender = newValue),
+                              dropdownColor:
+                                  MyColors.blueColor.withOpacity(0.8),
+                              items: ['Male', 'Female']
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) =>
+                                          DropdownMenuItem<String>(
+                                            value: value,
+                                            child: getBoldTextCenter(
+                                                value, 14, Colors.white),
+                                          ))
+                                  .toList(),
+
+                              // add extra sugar..
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white,
+                              ),
+                              // iconSize: ,
+                              underline: SizedBox(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          getBoldText(
+                              'Upload Documents', 16, MyColors.blueColor),
+                        ],
+                      ),
                       SizedBox(
                         height: 10,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            documents.clear();
-                          });
-                          _displayTextInputDialog(context);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      ListView.builder(
+                          itemCount: documents.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return getBoldText(documents[index]['doc_name']!,
+                                15, Colors.black);
+                          }),
+                      Form(
+                        key: _form2,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            getNormalText('Add Student', 14, Colors.lightBlue)
+                            TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
+                              onSaved: (newValue) {
+                                docName = newValue!;
+                              },
+                              controller: _textFieldController5,
+                              decoration:
+                                  InputDecoration(hintText: "Document name"),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            file == null
+                                ? Container()
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.25,
+                                          child: Image.file(File(file!.path)),
+                                        ),
+                                        IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                file = null;
+                                              });
+                                            },
+                                            icon: Icon(Icons.delete))
+                                      ],
+                                    ),
+                                  ),
+                            file == null
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      GestureDetector(
+                                          onTap: () {
+                                            selectImageCamera();
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.amber,
+                                              borderRadius:
+                                                  BorderRadius.circular(3),
+                                            ),
+                                            child: getBoldText(
+                                                'Camera', 14, Colors.white),
+                                          )),
+                                      GestureDetector(
+                                          onTap: () {
+                                            selectImageGallery();
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.amber,
+                                              borderRadius:
+                                                  BorderRadius.circular(3),
+                                            ),
+                                            child: getBoldText(
+                                                'Gallery', 14, Colors.white),
+                                          )),
+                                    ],
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            // RaisedButton(
+                            //   color: MyColors.blueColor,
+                            //   shape: StadiumBorder(),
+                            //   child: getBoldText('Upload Homework', 13, Colors.white),
+                            //   onPressed: () {
+                            //     uploadImage();
+                            //   },
+                            // )
+                            GestureDetector(
+                              onTap: () {
+                                _form2.currentState!.save();
+                                uploadImage();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  getNormalText(
+                                      'Add Document', 14, Colors.lightBlue)
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      getBoldText('Enter Details', 16, MyColors.blueColor),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.male,
-                            color: MyColors.blueColor,
-                          ),
-                          hintText: 'Enter father\'s name',
-                          labelText: 'Father\'s Name',
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          fatherName = newValue!;
-                        },
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.female,
-                            color: MyColors.blueColor,
-                          ),
-                          hintText: 'Enter mother\'s name',
-                          labelText: 'Mother\'s Name',
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          motherName = newValue!;
-                        },
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.map,
-                            color: MyColors.blueColor,
-                          ),
-                          hintText: 'Enter address',
-                          labelText: 'Address',
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          address = newValue!;
-                        },
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.phone,
-                            color: MyColors.blueColor,
-                          ),
-                          hintText: 'Enter a phone number',
-                          labelText: 'Phone',
-                        ),
-                        keyboardType: TextInputType.phone,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          mobileNumber = newValue!;
-                        },
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.money,
-                            color: MyColors.blueColor,
-                          ),
-                          hintText: 'Enter total fees',
-                          labelText: 'Total Fees',
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter some value';
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          totalFees = int.parse(newValue!);
-                        },
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      getBoldText(
-                        'Create Email Id and Password',
-                        16,
-                        MyColors.blueColor,
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.email,
-                            color: MyColors.blueColor,
-                          ),
-                          hintText: 'Enter Email',
-                          labelText: 'Email',
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          email = newValue!;
-                        },
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.lock,
-                            color: MyColors.blueColor,
-                          ),
-                          hintText: 'Enter password',
-                          labelText: 'Password',
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          password = newValue!;
-                        },
                       ),
                       Container(
                         alignment: Alignment.center,
                         padding: const EdgeInsets.only(top: 20.0),
                         child: RaisedButton(
                           shape: StadiumBorder(),
-                          color: MyColors.blueColor,
+                          color: Colors.green,
                           child: getBoldText(
-                            'Save and Continue',
+                            'Add Child',
                             15,
                             Colors.white,
                           ),
                           onPressed: () {
-                            var parentProvider = Provider.of<ParentsProvider>(
-                                context,
-                                listen: false);
+                            if (_form.currentState!.validate()) {
+                              _form.currentState!.save();
+                              setState(
+                                () {
+                                  children.add(
+                                    ChildModel(
+                                      name: studentName,
+                                      standard: standard!,
+                                      documents: documents,
+                                      bloodGroup: bloodGroup,
+                                      dob: dob,
+                                      gender: gender!,
+                                    ),
+                                  );
+                                },
+                              );
+                              var newParent = ParentModel(
+                                id: DateTime.now().toString(),
+                                email: widget.parentModel.email,
+                                password: widget.parentModel.password,
+                                fatherName: widget.parentModel.fatherName,
+                                motherName: widget.parentModel.motherName,
+                                address: widget.parentModel.address,
+                                phoneNumber: widget.parentModel.phoneNumber,
+                                oneSignalId: '',
+                                totalFee: widget.parentModel.totalFee,
+                                children: children,
+                                fees: [],
+                                dateTime: DateTime.now().toString(),
+                                isBlocked: false,
+                                feeBreakdown: widget.parentModel.feeBreakdown,
+                              );
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AddStudent(
+                                            parentModel: newParent,
+                                          )));
+                            }
+                          },
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: RaisedButton(
+                            shape: StadiumBorder(),
+                            color: MyColors.blueColor,
+                            child: getBoldText(
+                              'Save and Continue',
+                              15,
+                              Colors.white,
+                            ),
+                            onPressed: () {
+                              var parentProvider = Provider.of<ParentsProvider>(
+                                  context,
+                                  listen: false);
 
-                            if (_formKey.currentState!.validate()) {
                               setState(() {
                                 isLoading = true;
                               });
-                              _formKey.currentState!.save();
+
                               var newParent = ParentModel(
-                                  id: DateTime.now().toString(),
-                                  email: email,
-                                  password: password,
-                                  fatherName: fatherName,
-                                  motherName: motherName,
-                                  address: address,
-                                  phoneNumber: mobileNumber,
-                                  oneSignalId: '',
-                                  totalFee: totalFees,
-                                  children: children,
-                                  fees: [],
-                                  dateTime: DateTime.now().toString(),
-                                  isBlocked: false);
+                                id: DateTime.now().toString(),
+                                email: widget.parentModel.email,
+                                password: widget.parentModel.password,
+                                fatherName: widget.parentModel.fatherName,
+                                motherName: widget.parentModel.motherName,
+                                address: widget.parentModel.address,
+                                phoneNumber: widget.parentModel.phoneNumber,
+                                oneSignalId: '',
+                                totalFee: widget.parentModel.totalFee,
+                                children: children,
+                                fees: [],
+                                feeBreakdown: widget.parentModel.feeBreakdown,
+                                dateTime: DateTime.now().toString(),
+                                isBlocked: false,
+                              );
                               parentProvider
                                   .addParent(newParent)
                                   .catchError((error) {
                                 setState(() {
                                   isLoading = false;
                                 });
-                                return ScaffoldMessenger.of(context)
+                                ScaffoldMessenger.of(context)
                                     .showSnackBar(const SnackBar(
                                   content: Text('Somethineg went wrong'),
                                 ));
@@ -814,9 +567,7 @@ class _AddStudentState extends State<AddStudent> {
                                   );
                                 });
                               });
-                            }
-                          },
-                        ),
+                            }),
                       ),
                     ],
                   ),

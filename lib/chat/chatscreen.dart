@@ -4,6 +4,7 @@ import 'package:narayandas_app/chat/database.dart';
 import 'package:narayandas_app/utils/helper.dart';
 
 import 'package:narayandas_app/utils/shared_pref.dart';
+import 'package:narayandas_app/utils/strings.dart';
 import 'package:random_string/random_string.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -20,11 +21,11 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageTextEdittingController = TextEditingController();
 
   getMyInfoFromSharedPreference() async {
-    myName = 'a';
+    myName = currentUser!.name;
     myProfilePic =
         'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png';
-    myUserName = 'ans';
-    myEmail = 'e';
+    myUserName = currentUser!.name;
+    myEmail = currentUser!.email;
 
     chatRoomId = getChatRoomIdByUsernames(widget.chatWithUsername, myUserName!);
   }

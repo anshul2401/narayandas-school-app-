@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/chat/chat_home.dart';
+import 'package:narayandas_app/chat2/page/chats_page.dart';
 import 'package:narayandas_app/parents/const.dart';
 import 'package:narayandas_app/parents/p_home_page.dart';
+import 'package:narayandas_app/parents/profile_page.dart';
+import 'package:narayandas_app/parents/story_view.dart';
 import 'package:narayandas_app/provider/parents_provider.dart';
+import 'package:narayandas_app/provider/story_provider.dart';
+import 'package:narayandas_app/provider/youtube_provider.dart';
 import 'package:narayandas_app/teacher/t_home_page.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
@@ -21,9 +26,8 @@ class _ParentHomePageState extends State<ParentHomePage> {
   bool isLoading = false;
   static List<Widget> _widgetOptions = <Widget>[
     PHomePage(),
-    Home(),
-    Text('Profile Page',
-        style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    ChatsPage(),
+    ProfilePage()
   ];
 
   void _onItemTapped(int index) {
@@ -39,8 +43,22 @@ class _ParentHomePageState extends State<ParentHomePage> {
     });
 
     Future.delayed(Duration.zero).then((value) {
+      Provider.of<StoryProvider>(context, listen: false)
+          .fetchAndSetStroy()
+          .then((value) {
+        setState(() {});
+      });
+    });
+    Future.delayed(Duration.zero).then((value) {
       Provider.of<ParentsProvider>(context, listen: false)
           .fetchAndSetParents()
+          .then((value) {
+        setState(() {});
+      });
+    });
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<YoutubeProvider>(context, listen: false)
+          .fetchAndSetYoutube()
           .then((value) {
         setState(() {
           isLoading = false;
@@ -63,15 +81,15 @@ class _ParentHomePageState extends State<ParentHomePage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Text('Home'),
+              label: 'Home',
               backgroundColor: Colors.white),
           BottomNavigationBarItem(
               icon: Icon(Icons.chat),
-              title: Text('Chat'),
+              label: 'Chat',
               backgroundColor: Colors.white),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            title: Text('Profile'),
+            label: 'Profile',
             backgroundColor: Colors.white,
           ),
         ],

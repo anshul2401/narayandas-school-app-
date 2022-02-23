@@ -22,7 +22,12 @@ class TeacherProvider with ChangeNotifier {
               'document': teacherModel.document,
               'date_time': teacherModel.datetime,
               'one_signal_id': teacherModel.oneSignalId,
-              'is_blocked': teacherModel.isBlocked
+              'is_blocked': teacherModel.isBlocked,
+              'can_edit_meal': teacherModel.canEditMeal,
+              'can_add_fees': teacherModel.canAddFees,
+              'can_add_student': teacherModel.canAddStudent,
+              'can_add_gallery': teacherModel.canAddGallery,
+              'can_promote_class': teacherModel.canPromoteClass,
             }))
         .then((value) {
       http
@@ -31,6 +36,8 @@ class TeacherProvider with ChangeNotifier {
         body: json.encode({
           'email': teacherModel.email,
           'password': teacherModel.password,
+          'name': teacherModel.name,
+          'one_signal_id': teacherModel.oneSignalId,
           'role': 'Teacher',
           'is_blocked': false,
           'role_id': json.decode(value.body)['name'],
@@ -40,28 +47,42 @@ class TeacherProvider with ChangeNotifier {
         print(error);
         throw error;
       });
+      // Map<String, dynamic> userInfoMap = {
+      //   "email": teacherModel.email,
+      //   "username": teacherModel.email.replaceAll("@gmail.com", ""),
+      //   "name": teacherModel.name,
+      //   "role": 'Teacher',
+      //   "imgUrl":
+      //       'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png'
+      // };
       Map<String, dynamic> userInfoMap = {
-        "email": teacherModel.email,
-        "username": teacherModel.email.replaceAll("@gmail.com", ""),
-        "name": teacherModel.name,
-        "imgUrl":
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png'
+        'idUser': json.decode(value.body)['name'],
+        'name': teacherModel.name,
+        'role': 'Teacher',
+        'urlAvatar':
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png',
+        'lastMessageTime': DateTime.now(),
       };
-
       DatabaseMethods()
           .addUserInfoToDB(json.decode(value.body)['name'], userInfoMap);
 
       var newTeacher = TeacherModel(
-          id: json.decode(value.body)['name'],
-          address: teacherModel.address,
-          document: teacherModel.document,
-          email: teacherModel.email,
-          name: teacherModel.name,
-          phone: teacherModel.phone,
-          password: teacherModel.password,
-          oneSignalId: teacherModel.oneSignalId,
-          datetime: teacherModel.datetime,
-          isBlocked: teacherModel.isBlocked);
+        id: json.decode(value.body)['name'],
+        address: teacherModel.address,
+        document: teacherModel.document,
+        email: teacherModel.email,
+        name: teacherModel.name,
+        phone: teacherModel.phone,
+        password: teacherModel.password,
+        oneSignalId: teacherModel.oneSignalId,
+        datetime: teacherModel.datetime,
+        isBlocked: teacherModel.isBlocked,
+        canAddFees: teacherModel.canAddFees,
+        canAddGallery: teacherModel.canAddGallery,
+        canAddStudent: teacherModel.canAddStudent,
+        canEditMeal: teacherModel.canEditMeal,
+        canPromoteClass: teacherModel.canPromoteClass,
+      );
       _teacher.insert(0, newTeacher);
       notifyListeners();
     }).catchError((error) {
@@ -89,17 +110,22 @@ class TeacherProvider with ChangeNotifier {
 
       data.forEach((key, value) {
         loadedTeacher.add(TeacherModel(
-          id: key,
-          name: value['name'],
-          address: value['address'],
-          password: value['password'],
-          email: value['email'],
-          datetime: value['date_time'],
-          document: value['documents'] == null ? [] : docs(value['documents']),
-          phone: value['phone'],
-          isBlocked: value['is_blocked'],
-          oneSignalId: value['one_signal_id'],
-        ));
+            id: key,
+            name: value['name'],
+            address: value['address'],
+            password: value['password'],
+            email: value['email'],
+            datetime: value['date_time'],
+            document:
+                value['documents'] == null ? [] : docs(value['documents']),
+            phone: value['phone'],
+            isBlocked: value['is_blocked'],
+            oneSignalId: value['one_signal_id'],
+            canAddFees: value['can_add_fees'],
+            canAddGallery: value['can_add_gallery'],
+            canAddStudent: value['can_add_student'],
+            canEditMeal: value['can_edit_meal'],
+            canPromoteClass: value['can_promote_class']));
       });
       _teacher = loadedTeacher;
       notifyListeners();
@@ -123,7 +149,12 @@ class TeacherProvider with ChangeNotifier {
               'document': teacherModel.document,
               'date_time': teacherModel.datetime,
               'one_signal_id': teacherModel.oneSignalId,
-              'is_blocked': teacherModel.isBlocked
+              'is_blocked': teacherModel.isBlocked,
+              'can_edit_meal': teacherModel.canEditMeal,
+              'can_add_fees': teacherModel.canAddFees,
+              'can_add_student': teacherModel.canAddStudent,
+              'can_add_gallery': teacherModel.canAddGallery,
+              'can_promote_class': teacherModel.canPromoteClass,
             }));
         _teacher[index] = teacherModel;
         notifyListeners();

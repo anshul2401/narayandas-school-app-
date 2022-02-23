@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:http/http.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:narayandas_app/utils/colors.dart';
+import 'package:narayandas_app/utils/strings.dart';
 
 Text getBoldTextCenter(String text, double fontSize, Color color) {
   return Text(
@@ -71,7 +73,7 @@ Widget getButton(VoidCallback onVoidCallBack, String text, color) {
       decoration:
           BoxDecoration(color: color, borderRadius: BorderRadius.circular(5)),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
         child: getNormalText(
           text,
           12,
@@ -259,4 +261,35 @@ class FirebaseApi {
 
 Widget getEmptyHereMsg() {
   return Center(child: getNormalText('Nothing here!', 20, Colors.grey));
+}
+
+Future<Response> sendNotification(
+    String contents, String heading, List<String> o) async {
+  return await post(
+    Uri.parse('https://onesignal.com/api/v1/notifications'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      "app_id":
+          ONE_SIGNAL_ID, //kAppId is the App Id that one get from the OneSignal When the application is registered.
+
+      "include_player_ids":
+          o, //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
+
+      // android_accent_color reprsent the color of the heading text in the notifiction
+      "android_accent_color": "FF9976D2",
+
+      "small_icon": "ic_stat_onesignal_default",
+
+      "large_icon":
+          "https://www.filepicker.io/api/file/zPloHSmnQsix82nlj9Aj?filename=name.jpg",
+
+      "headings": {"en": heading},
+
+      "contents": {"en": contents},
+
+      "data": {"orderid": 1},
+    }),
+  );
 }

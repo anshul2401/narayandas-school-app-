@@ -51,7 +51,7 @@ class _AddMealState extends State<AddMeal> {
   String day = '';
   String meal = '';
   String benifit = '';
-  List<MealModel> meals = [];
+
   bool isLoading = false;
   TextEditingController t1 = TextEditingController();
   TextEditingController t2 = TextEditingController();
@@ -72,14 +72,16 @@ class _AddMealState extends State<AddMeal> {
         });
       });
     });
-    var mealProvider = Provider.of<MealProvider>(context, listen: false);
 
-    meals.addAll(mealProvider.meals);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    List<MealModel> meals = [];
+    var mealProvider = Provider.of<MealProvider>(context, listen: false);
+
+    meals.addAll(mealProvider.meals);
     return Scaffold(
       appBar: getAppBar('Meals', context),
       body: isLoading

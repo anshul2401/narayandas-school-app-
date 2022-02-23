@@ -9,6 +9,7 @@ import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:narayandas_app/utils/shared_pref.dart';
 import 'package:narayandas_app/utils/strings.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
@@ -23,7 +24,59 @@ class _LoginState extends State<Login> {
   String password = '';
   bool isLoading = false;
   UserAuth userAuth = UserAuth();
-  var _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // setState(() {
+    //   isLoading = true;
+    // });
+    // Future.delayed(Duration.zero).then((value) {
+    //   _initPlatformState();
+    // });
+    // if (mounted) {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    // }
+    super.initState();
+  }
+
+  Future<void> _initPlatformState(AuthModel element) async {
+    // var oneSignalProvider = Provider.of<OneSignalIds>(context, listen: false);
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+    await OneSignal.shared.setAppId(ONE_SIGNAL_ID);
+
+    var deviceState = await OneSignal.shared.getDeviceState();
+
+    if (deviceState == null || deviceState.userId == null) return;
+
+    var playerId = deviceState.userId!;
+    var authProvider = Provider.of<AuthProvider>(context, listen: false);
+    await authProvider.updateAuth(
+        element.id,
+        AuthModel(
+            id: element.id,
+            email: element.email,
+            name: element.name,
+            password: element.password,
+            isBlocked: element.isBlocked,
+            role: element.role,
+            oneSignalId: playerId,
+            roleId: element.roleId));
+
+// The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+    // OneSignal.shared.promptUserForPushNotificationPermission().then((accepted) {
+    //   print("Accepted permission: $accepted");
+    // });
+    // await oneSignalProvider.fetchAndSetOneSignalId();
+    // await OneSignal.shared.getDeviceState().then((value) {
+    //   oneSignalProvider.oneSingalId.contains(value!.userId)
+    //       ? null
+    //       : oneSignalProvider.addOneSignalId(value.userId);
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -166,7 +219,28 @@ class _LoginState extends State<Login> {
                                     //     isLoading = false;
                                     //   });
                                     // });
+
+                                    // await OneSignal.shared
+                                    //     .getDeviceState()
+                                    //     .then((value) async {
+                                    //   var authProvider =
+                                    //       Provider.of<AuthProvider>(context,
+                                    //           listen: false);
+                                    //   await authProvider.updateAuth(
+                                    //       element.id,
+                                    //       AuthModel(
+                                    //           id: element.id,
+                                    //           email: element.email,
+                                    //           name: element.name,
+                                    //           password: element.password,
+                                    //           isBlocked: element.isBlocked,
+                                    //           role: element.role,
+                                    //           oneSignalId: value!.userId ?? ' ',
+                                    //           roleId: element.roleId));
+                                    // });
                                     currentUser = element;
+                                    await _initPlatformState(element);
+
                                     await SharedPreferenceHelper()
                                         .saveUserId(element.id);
                                     await SharedPreferenceHelper()

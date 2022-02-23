@@ -16,16 +16,27 @@ class EditParent extends StatefulWidget {
 }
 
 class _EditParentState extends State<EditParent> {
-  late String name;
+  late String fatherName;
+  late String motherName;
   late String email;
   late String password;
   late String address;
   late String mobileNumber;
+  late int totalFee;
+  List<Map<String, dynamic>> feeBreakdown = [];
+  late String feeTitle = '';
+  late int amount = 0;
   final TextEditingController t1 = TextEditingController();
   final TextEditingController t2 = TextEditingController();
   final TextEditingController t3 = TextEditingController();
   final TextEditingController t4 = TextEditingController();
+
   final TextEditingController t5 = TextEditingController();
+  final TextEditingController t6 = TextEditingController();
+  TextEditingController t7 = TextEditingController();
+
+  TextEditingController t8 = TextEditingController();
+  TextEditingController t9 = TextEditingController();
   bool isLoading = false;
   @override
   void initState() {
@@ -34,14 +45,18 @@ class _EditParentState extends State<EditParent> {
     t3.text = widget.parentModel.password;
     t4.text = widget.parentModel.address;
     t5.text = widget.parentModel.phoneNumber;
+    t6.text = widget.parentModel.motherName;
+    t7.text = widget.parentModel.totalFee.toString();
+    feeBreakdown.addAll(widget.parentModel.feeBreakdown);
     super.initState();
   }
 
+  final _formKey = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
     return Scaffold(
-      appBar: getAppBar('Edit Teacher', context),
+      appBar: getAppBar('Edit Parent', context),
       body: isLoading
           ? getLoading(context)
           : SingleChildScrollView(
@@ -60,8 +75,8 @@ class _EditParentState extends State<EditParent> {
                             Icons.person,
                             color: MyColors.blueColor,
                           ),
-                          hintText: 'Enter full name',
-                          labelText: 'Full Name',
+                          hintText: 'Enter father name',
+                          labelText: 'Father Name',
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -70,7 +85,27 @@ class _EditParentState extends State<EditParent> {
                           return null;
                         },
                         onSaved: (newValue) {
-                          name = newValue!;
+                          fatherName = newValue!;
+                        },
+                      ),
+                      TextFormField(
+                        controller: t6,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.person,
+                            color: MyColors.blueColor,
+                          ),
+                          hintText: 'Enter mother name',
+                          labelText: 'Mother name',
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) {
+                          motherName = newValue!;
                         },
                       ),
 
@@ -113,6 +148,156 @@ class _EditParentState extends State<EditParent> {
                         },
                         onSaved: (newValue) {
                           mobileNumber = newValue!;
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      getBoldText('Fee Breakdown', 16, MyColors.blueColor),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      feeBreakdown.isEmpty
+                          ? Container(
+                              height: 0,
+                            )
+                          : ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: feeBreakdown.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 8),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          getBoldText(
+                                              feeBreakdown[index]['fee_title'],
+                                              15,
+                                              Colors.black),
+                                          getNormalText(
+                                              '₹ ' +
+                                                  feeBreakdown[index]['amount']
+                                                      .toString(),
+                                              15,
+                                              Colors.black),
+                                        ],
+                                      ),
+                                      Divider(),
+                                    ],
+                                  ),
+                                );
+                              }),
+                      Form(
+                        key: _formKey2,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  child: TextFormField(
+                                    controller: t9,
+                                    decoration: const InputDecoration(
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: MyColors.blueColor,
+                                      ),
+                                      hintText: 'Fee purpose',
+                                      labelText: 'Fees purpose',
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter some text';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (newValue) {
+                                      feeTitle = newValue!;
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  child: TextFormField(
+                                    controller: t8,
+                                    decoration: const InputDecoration(
+                                      icon: Icon(
+                                        Icons.money,
+                                        color: MyColors.blueColor,
+                                      ),
+                                      hintText: 'Enter amount',
+                                      labelText: 'Amount',
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter some value';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (newValue) {
+                                      amount = int.parse(newValue!);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                if (_formKey2.currentState!.validate()) {
+                                  _formKey2.currentState!.save();
+                                  setState(() {
+                                    feeBreakdown.add({
+                                      'fee_title': feeTitle,
+                                      'amount': amount,
+                                    });
+                                  });
+
+                                  _formKey2.currentState!.reset();
+                                  t8.clear();
+                                  t9.clear();
+                                }
+                              },
+                              child: getNormalText(
+                                'Add Fee',
+                                13,
+                                Colors.blue,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      TextFormField(
+                        controller: t7,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.money,
+                            color: MyColors.blueColor,
+                          ),
+                          hintText: 'Enter total fees',
+                          labelText: 'Total Fees',
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter some value';
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) {
+                          totalFee = int.parse(newValue!);
                         },
                       ),
                       SizedBox(
@@ -182,6 +367,7 @@ class _EditParentState extends State<EditParent> {
                       //     totalFees = int.parse(newValue!);
                       //   },
                       // ),
+
                       Container(
                         alignment: Alignment.center,
                         padding: const EdgeInsets.only(top: 20.0),
@@ -207,15 +393,16 @@ class _EditParentState extends State<EditParent> {
                                 id: widget.parentModel.id,
                                 email: email,
                                 password: password,
-                                fatherName: widget.parentModel.fatherName,
+                                fatherName: fatherName,
                                 address: address,
                                 phoneNumber: mobileNumber,
                                 oneSignalId: widget.parentModel.oneSignalId,
                                 children: widget.parentModel.children,
                                 dateTime: DateTime.now().toString(),
                                 fees: widget.parentModel.fees,
-                                totalFee: widget.parentModel.totalFee,
-                                motherName: widget.parentModel.motherName,
+                                feeBreakdown: feeBreakdown,
+                                totalFee: totalFee,
+                                motherName: motherName,
                                 isBlocked: false,
                               );
                               parentProvider
@@ -238,7 +425,7 @@ class _EditParentState extends State<EditParent> {
                                   ));
                                 });
 
-                                Navigator.of(context).pop();
+                                // Navigator.of(context).pop();
                               });
                             }
                           },

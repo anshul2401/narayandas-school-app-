@@ -64,29 +64,29 @@ class _AddGalleryImageState extends State<AddGalleryImage> {
                           ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.75,
-                              child: getNormalText(
-                                  file == null ? '' : file!.name,
-                                  12,
-                                  Colors.black),
+                      file == null
+                          ? Container()
+                          : Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.25,
+                                    child: Image.file(File(file!.path)),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          file = null;
+                                        });
+                                      },
+                                      icon: Icon(Icons.delete))
+                                ],
+                              ),
                             ),
-                            file == null
-                                ? Container()
-                                : IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        file = null;
-                                      });
-                                    },
-                                    icon: Icon(Icons.delete))
-                          ],
-                        ),
-                      ),
                       file == null
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -124,19 +124,50 @@ class _AddGalleryImageState extends State<AddGalleryImage> {
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: CachedNetworkImage(
-                                fit: BoxFit.cover,
-                                imageUrl: images[index].imgUrl,
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) =>
-                                        Container(
-                                  height: 50,
-                                  width: 50,
-                                  child: CircularProgressIndicator(
-                                      value: downloadProgress.progress),
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    imageUrl: images[index].imgUrl,
+                                    progressIndicatorBuilder:
+                                        (context, url, downloadProgress) =>
+                                            getLoading(context),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      height: 40,
+                                      width: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: IconButton(
+                                          onPressed: () async {
+                                            var galleryProvider =
+                                                Provider.of<GalleryProvider>(
+                                                    context,
+                                                    listen: false);
+                                            setState(() {
+                                              isLoading = true;
+                                            });
+                                            await FirebaseStorage.instance
+                                                .refFromURL(
+                                                    images[index].imgUrl)
+                                                .delete();
+                                            await galleryProvider.deleteGallery(
+                                                images[index].id);
+                                            setState(() {
+                                              isLoading = false;
+                                            });
+                                          },
+                                          icon: Icon(Icons.delete)),
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
                           }),

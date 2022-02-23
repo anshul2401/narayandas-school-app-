@@ -31,6 +31,7 @@ class ParentsProvider with ChangeNotifier {
               'fees': parent.fees,
               'date_time': parent.dateTime,
               'is_blocked': parent.isBlocked,
+              'fee_breakdown': parent.feeBreakdown,
             }))
         .then(
       (value) {
@@ -68,7 +69,9 @@ class ParentsProvider with ChangeNotifier {
           body: json.encode({
             'email': parent.email,
             'password': parent.password,
+            'name': parent.fatherName,
             'role': 'Parent',
+            'one_signal_id': parent.oneSignalId,
             'is_blocked': false,
             'role_id': json.decode(value.body)['name'],
           }),
@@ -77,12 +80,21 @@ class ParentsProvider with ChangeNotifier {
           print(error);
           throw error;
         });
+        // Map<String, dynamic> userInfoMap = {
+        //   "email": parent.email,
+        //   "username": parent.email.replaceAll("@gmail.com", ""),
+        //   "name": parent.fatherName,
+        //   "role": 'Parent',
+        //   "imgUrl":
+        //       'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png'
+        // };
         Map<String, dynamic> userInfoMap = {
-          "email": parent.email,
-          "username": parent.email.replaceAll("@gmail.com", ""),
-          "name": parent.fatherName,
-          "imgUrl":
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png'
+          'idUser': json.decode(value.body)['name'],
+          'name': parent.fatherName,
+          'role': 'Parent',
+          'urlAvatar':
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png',
+          'lastMessageTime': DateTime.now(),
         };
 
         DatabaseMethods()
@@ -100,6 +112,7 @@ class ParentsProvider with ChangeNotifier {
             totalFee: parent.totalFee,
             children: parent.children,
             fees: parent.fees,
+            feeBreakdown: parent.feeBreakdown,
             dateTime: parent.dateTime,
             isBlocked: parent.isBlocked);
         _parents.insert(0, newParent);
@@ -119,6 +132,15 @@ class ParentsProvider with ChangeNotifier {
       final List<ParentModel> loadedParent = [];
       data.forEach((key, value) {
         List<ChildModel> d = [];
+        final List<Map<String, dynamic>> d2 = [];
+        value['fee_breakdown'] == null
+            ? null
+            : value['fee_breakdown'].forEach((element) {
+                d2.add({
+                  'fee_title': element['fee_title'],
+                  'amount': element['amount'],
+                });
+              });
         value['children'].forEach((element) {
           d.add(ChildModel(
               name: element['name'],
@@ -128,6 +150,7 @@ class ParentsProvider with ChangeNotifier {
               dob: element['dob'],
               gender: element['gender']));
         });
+
         loadedParent.add(ParentModel(
           id: key,
           address: value['address'],
@@ -136,6 +159,7 @@ class ParentsProvider with ChangeNotifier {
           email: value['email'],
           fatherName: value['father_name'],
           fees: [],
+          feeBreakdown: value['fee_breakdown'] == null ? [] : d2,
           isBlocked: value['is_blocked'],
           motherName: value['mother_name'],
           oneSignalId: value['one_signal_id'],
@@ -172,6 +196,7 @@ class ParentsProvider with ChangeNotifier {
               'total_fees': parent.totalFee,
               'children': childdata,
               'fees': parent.fees,
+              'fee_breakdown': parent.feeBreakdown,
               'date_time': parent.dateTime,
               'is_blocked': parent.isBlocked,
             }));

@@ -58,19 +58,18 @@ class _GalleryState extends State<Gallery> {
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: CachedNetworkImage(
-                                fit: BoxFit.cover,
-                                imageUrl: images[index].imgUrl,
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) =>
-                                        Container(
-                                  height: 50,
-                                  width: 50,
-                                  child: CircularProgressIndicator(
-                                      value: downloadProgress.progress),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: CachedNetworkImage(
+                                  // fit: BoxFit.cover,
+                                  imageUrl: images[index].imgUrl,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) =>
+                                          getLoading(context),
+
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
                               ),
                             );
                           }),

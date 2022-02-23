@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:narayandas_app/chat/chatscreen.dart';
 import 'package:narayandas_app/chat/database.dart';
 import 'package:narayandas_app/utils/helper.dart';
+import 'package:narayandas_app/utils/strings.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -19,11 +20,11 @@ class _HomeState extends State<Home> {
       TextEditingController();
 
   getMyInfoFromSharedPreference() async {
-    myName = 'Anshul';
+    myName = currentUser!.name;
     myProfilePic =
         'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png';
-    myUserName = 'ans';
-    myEmail = 'e';
+    myUserName = currentUser!.name;
+    myEmail = currentUser!.email;
     setState(() {});
   }
 
@@ -258,7 +259,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: Image.network(
-                profilePicUrl,
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png',
                 height: 40,
                 width: 40,
               ),

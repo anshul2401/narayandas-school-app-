@@ -29,13 +29,16 @@ class SearchStudentState extends State<SearchStudent> {
     setState(() {
       isLoading = true;
     });
-    Provider.of<StudentProvider>(context, listen: false)
-        .fetchAndSetStudents()
-        .then((value) {
-      setState(() {
-        isLoading = false;
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<StudentProvider>(context, listen: false)
+          .fetchAndSetStudents()
+          .then((value) {
+        setState(() {
+          isLoading = false;
+        });
       });
     });
+
     var studentProvider = Provider.of<StudentProvider>(context, listen: false);
     students = studentProvider.students;
   }

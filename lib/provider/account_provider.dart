@@ -17,6 +17,7 @@ class AccountProvider with ChangeNotifier {
               'deb_cred': accountModel.debCred,
               'amount': accountModel.amount,
               'date_time': accountModel.dateTime,
+              'mode_of_payment': accountModel.modeOfPayment,
             }))
         .then((value) {
       var newAccount = AccountModel(
@@ -24,6 +25,7 @@ class AccountProvider with ChangeNotifier {
           remark: accountModel.remark,
           dateTime: accountModel.dateTime,
           debCred: accountModel.debCred,
+          modeOfPayment: accountModel.modeOfPayment,
           amount: accountModel.amount);
       _account.insert(0, newAccount);
       notifyListeners();
@@ -43,6 +45,7 @@ class AccountProvider with ChangeNotifier {
             amount: value['amount'],
             remark: value['remark'],
             dateTime: value['date_time'],
+            modeOfPayment: value['mode_of_payment'],
             debCred: value['deb_cred']));
       });
       _account = loadedAccount;
@@ -50,6 +53,25 @@ class AccountProvider with ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+  List<AccountModel> getTotalDebit() {
+    return _account.where((element) {
+      return element.debCred == 'Debit';
+    }).toList();
+  }
+
+  List<AccountModel> getTotalCredit() {
+    return _account.where((element) {
+      return element.debCred == 'Credit';
+    }).toList();
+  }
+
+  List<AccountModel> getACcountByMonth(String month, String year) {
+    return _account.where((element) {
+      return (DateTime.parse(element.dateTime).month.toString() == month &&
+          DateTime.parse(element.dateTime).year.toString() == year);
+    }).toList();
   }
 
   // Future<void> updateFees(String id, FeesModel feesModel) async {

@@ -37,11 +37,28 @@ class TeacherAttendanceProvider with ChangeNotifier {
       final resopnse = await http.get(Uri.parse(teacherAttendanceUrl));
       final data = json.decode(resopnse.body) as Map<String, dynamic>;
       final List<TeacherAttendanceModel> loadedTeacherAttendance = [];
+      List<Map<String, String>> docs(List<dynamic> li) {
+        List<Map<String, String>> ls = [];
+        li.forEach((element) {
+          ls.add(
+            {
+              'name': element['name'],
+              'teacher_id': element['teacher_id'],
+            },
+          );
+        });
+        return ls;
+      }
+
       data.forEach((key, value) {
         loadedTeacherAttendance.add(TeacherAttendanceModel(
           id: key,
-          absentTeachers: value['absent_teachers'],
-          presentTeachers: value['present_teachers'],
+          absentTeachers: value['absent_teachers'] == null
+              ? []
+              : docs(value['absent_teachers']),
+          presentTeachers: value['present_teachers'] == null
+              ? []
+              : docs(value['present_teachers']),
           dateTime: value['date_time'],
         ));
       });

@@ -12,7 +12,11 @@ const String teacherAttendanceUrl = baseUrl + 'teacherAttendance.json';
 const String homeworkUrl = baseUrl + 'homework.json';
 const String authUrl = baseUrl + 'auth.json';
 const String galleryUrl = baseUrl + 'gallery.json';
+const String aboutUrl = baseUrl + 'about.json';
 const String accountUrl = baseUrl + 'account.json';
+const String youtubeUrl = baseUrl + 'youtube.json';
+const String noticeUrl = baseUrl + 'notice.json';
+const String storyUrl = baseUrl + 'story.json';
 const String oneSignalUrl = baseUrl + 'one_signal.json';
 AuthModel? currentUser;
 
@@ -29,4 +33,4 @@ const String CONTENT = 'content';
 const String VALID_TILL = 'valid_till';
 const String OFFER_START = 'offer_start';
 const String BILLING_DATE = 'billing_date';
-const String ONE_SIGNAL_ID = 'cfc69e7c-43de-48f2-a24b-c99c97d7fcaf';
+const String ONE_SIGNAL_ID = '8dcf3325-4a8b-4bd2-a259-8815276d3505';

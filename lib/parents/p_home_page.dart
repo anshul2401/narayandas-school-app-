@@ -6,8 +6,10 @@ import 'package:narayandas_app/parents/const.dart';
 import 'package:narayandas_app/parents/pages/about_us.dart';
 import 'package:narayandas_app/parents/pages/contact_us.dart';
 import 'package:narayandas_app/parents/pages/gallery.dart';
+import 'package:narayandas_app/parents/story_view.dart';
 import 'package:narayandas_app/parents/view_fees.dart';
 import 'package:narayandas_app/provider/parents_provider.dart';
+import 'package:narayandas_app/provider/youtube_provider.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:narayandas_app/utils/strings.dart';
@@ -26,11 +28,14 @@ class _PHomePageState extends State<PHomePage> {
   @override
   void initState() {
     _yc = YoutubePlayerController(
-      initialVideoId:
-          YoutubePlayer.convertUrlToId('https://youtu.be/cLnCcacIDW0')!,
+      initialVideoId: YoutubePlayer.convertUrlToId(
+          Provider.of<YoutubeProvider>(context, listen: false)
+              .youtubeModel[0]
+              .url)!,
       flags: const YoutubePlayerFlags(
-        autoPlay: false,
-        isLive: true,
+        loop: true,
+        autoPlay: true,
+        isLive: false,
       ),
     );
     super.initState();
@@ -112,8 +117,46 @@ class _PHomePageState extends State<PHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
           child: Column(
             children: [
+              Container(height: 360, child: StoryHome()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  getActionCard('view_meal_b.png', 'Meal Schedule', () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ViewMeal()));
+                  }),
+                  getActionCard('view_homework_b.png', 'View Homework', () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SelectClass(
+                                  isHomework: false,
+                                  isViewHomework: true,
+                                  isPromotion: false,
+                                  isViewAttendance: false,
+                                  isAddNotification: false,
+                                )));
+                  }),
+                  getActionCard('add_fees_b.png', 'Fee History', () {
+                    var parents =
+                        Provider.of<ParentsProvider>(context, listen: false)
+                            .parents;
+                    var p = parents.firstWhere((element) {
+                      return element.id == currentUser!.roleId;
+                    });
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ViewFees(parentModel: p)));
+                  }),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
               YoutubePlayerBuilder(
                 player: YoutubePlayer(
                   controller: _yc!,
@@ -125,33 +168,6 @@ class _PHomePageState extends State<PHomePage> {
               SizedBox(
                 height: 10,
               ),
-              getActionCard('view_meal_b.png', 'Meal Schedule', () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ViewMeal()));
-              }),
-              getActionCard('view_homework_b.png', 'View Homework', () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SelectClass(
-                              isHomework: false,
-                              isViewHomework: true,
-                              isPromotion: false,
-                              isViewAttendance: false,
-                            )));
-              }),
-              getActionCard('add_fees_b.png', 'Fee History', () {
-                var parents =
-                    Provider.of<ParentsProvider>(context, listen: false)
-                        .parents;
-                var p = parents.firstWhere((element) {
-                  return element.id == currentUser!.roleId;
-                });
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ViewFees(parentModel: p)));
-              }),
             ],
           ),
         ),
@@ -164,8 +180,9 @@ class _PHomePageState extends State<PHomePage> {
       onTap: callback,
       child: Card(
         child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Row(
+            padding: EdgeInsets.all(8),
+            width: MediaQuery.of(context).size.width / 3.5,
+            child: Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -178,7 +195,7 @@ class _PHomePageState extends State<PHomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    getBoldText(title, 15, Colors.black),
+                    getBoldText(title, 12, Colors.black),
                   ],
                 )
               ],

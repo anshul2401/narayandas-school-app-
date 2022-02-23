@@ -22,7 +22,7 @@ class UserAuth {
     AuthModel currentUser = _auth.firstWhere((element) {
       return element.id == id;
     });
-    print(currentUser.id + 'ggggg');
+
     await SharedPreferenceHelper().saveUserId(id);
   }
 }

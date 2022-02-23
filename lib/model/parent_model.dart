@@ -12,6 +12,7 @@ class ParentModel {
   late int totalFee;
   late List<ChildModel> children;
   late List<FeesModel> fees;
+  late List<Map<String, dynamic>> feeBreakdown;
   late String dateTime;
   bool isBlocked;
   ParentModel({
@@ -26,6 +27,7 @@ class ParentModel {
     required this.totalFee,
     required this.children,
     required this.fees,
+    required this.feeBreakdown,
     required this.dateTime,
     required this.isBlocked,
   });

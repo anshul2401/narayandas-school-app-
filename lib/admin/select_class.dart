@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/admin/add_attendance.dart';
 import 'package:narayandas_app/admin/add_homework.dart';
+import 'package:narayandas_app/admin/add_student_notification.dart';
 import 'package:narayandas_app/admin/promote_student.dart';
 import 'package:narayandas_app/admin/view_attendance.dart';
 import 'package:narayandas_app/admin/view_homework.dart';
@@ -12,12 +13,14 @@ class SelectClass extends StatefulWidget {
   final bool isViewHomework;
   final bool isPromotion;
   final bool isViewAttendance;
+  final bool isAddNotification;
   const SelectClass({
     Key? key,
     required this.isHomework,
     required this.isViewHomework,
     required this.isPromotion,
     required this.isViewAttendance,
+    required this.isAddNotification,
   }) : super(key: key);
 
   @override
@@ -71,20 +74,20 @@ class _SelectClassState extends State<SelectClass> {
                                 builder: (context) =>
                                     AddHomework(standard: standardList[index])))
                             : widget.isViewHomework
-                                ? Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) => ViewHomework(
-                                            standard: standardList[index])))
+                                ? Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                    builder: (context) => ViewHomework(
+                                        standard: standardList[index])))
                                 : widget.isPromotion
                                     ? Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
                                             builder: (context) => PromoteStudent(
                                                 standard: standardList[index])))
-                                    : Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (context) => AddAttendance(
-                                                standard:
-                                                    standardList[index])));
+                                    : widget.isAddNotification
+                                        ? Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                            builder: (context) => SelectStudent(
+                                                standard: standardList[index])))
+                                        : Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(builder: (context) => AddAttendance(standard: standardList[index])));
                   },
                   child: Card(
                       child: Padding(

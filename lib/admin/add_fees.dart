@@ -57,7 +57,7 @@ class _AddFeesState extends State<AddFees> {
   @override
   void initState() {
     var feesProvider = Provider.of<FeesProvider>(context, listen: false);
-    for (var e in feesProvider.fees) {
+    for (var e in feesProvider.getApprovedFees()) {
       e.parentId == widget.parentModel.id ? feesTillNow.add(e) : null;
     }
     for (var element in feesTillNow) {
@@ -99,6 +99,75 @@ class _AddFeesState extends State<AddFees> {
                             Colors.red,
                           )
                         ],
+                      ),
+                      getBoldText('Fee Breakdown', 15, MyColors.blueColor),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      widget.parentModel.feeBreakdown.isEmpty
+                          ? getNormalText('No Record', 13, Colors.black)
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: widget.parentModel.feeBreakdown.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.05,
+                                          child: getBoldText(
+                                              (index + 1).toString(),
+                                              13,
+                                              Colors.black),
+                                        ),
+                                        // Container(
+                                        //   width: MediaQuery.of(context)
+                                        //           .size
+                                        //           .width *
+                                        //       0.2,
+                                        //   child: getNormalText(
+                                        //       DateFormat('dd-MM-yy').format(
+                                        //           DateTime.parse(
+                                        //               feesTillNow[index]
+                                        //                   .dateTime)),
+                                        //       13,
+                                        //       Colors.black),
+                                        // ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.55,
+                                          child: getNormalText(
+                                              widget.parentModel
+                                                      .feeBreakdown[index]
+                                                  ['fee_title'],
+                                              13,
+                                              Colors.black),
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.15,
+                                          child: getNormalText(
+                                              '₹ ${widget.parentModel.feeBreakdown[index]['amount'].toString()}',
+                                              13,
+                                              Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                    Divider()
+                                  ],
+                                );
+                              },
+                            ),
+                      SizedBox(
+                        height: 10,
                       ),
                       getBoldText(
                           'Previous installments', 15, MyColors.blueColor),
@@ -226,7 +295,6 @@ class _AddFeesState extends State<AddFees> {
                             items: <String>[
                               'Online',
                               'Cash',
-                              'Cheque',
                             ].map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -300,6 +368,7 @@ class _AddFeesState extends State<AddFees> {
                                           id: DateTime.now().toString(),
                                           remark: remark,
                                           debCred: 'Credit',
+                                          modeOfPayment: modeOfPayment!,
                                           dateTime: DateTime.now().toString(),
                                           amount: amount))
                                       .then((value) {

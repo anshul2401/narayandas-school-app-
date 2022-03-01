@@ -86,4 +86,26 @@ class StudentProvider with ChangeNotifier {
       print('...');
     }
   }
+
+  Future<void> deleteStudent(String id) async {
+    final index = _students.indexWhere((c) => c.parentId == id);
+    if (index >= 0) {
+      _students.forEach((element) async {
+        if (element.parentId == id) {
+          try {
+            var url = baseUrl + 'students/${element.id}.json';
+            await http.delete(
+              Uri.parse(url),
+            );
+            _students.remove(element);
+            notifyListeners();
+          } catch (e) {
+            throw (e);
+          }
+        }
+      });
+    } else {
+      print('...');
+    }
+  }
 }

@@ -4,20 +4,22 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:narayandas_app/provider/student_attendance_provider.dart';
 import 'package:narayandas_app/provider/teacher_attendance_provider.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:narayandas_app/utils/strings.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalanderView extends StatefulWidget {
+class StudentCalanderView extends StatefulWidget {
+  String studentId;
   bool isForPresent;
-  CalanderView({required this.isForPresent});
+  StudentCalanderView({required this.isForPresent, required this.studentId});
   @override
-  _CalanderViewState createState() => _CalanderViewState();
+  _StudentCalanderViewState createState() => _StudentCalanderViewState();
 }
 
-class _CalanderViewState extends State<CalanderView> {
+class _StudentCalanderViewState extends State<StudentCalanderView> {
   final ValueNotifier<List<Event>> _selectedEvents = ValueNotifier([]);
 
   // Using a `LinkedHashSet` is recommended due to equality comparison override
@@ -69,26 +71,27 @@ class _CalanderViewState extends State<CalanderView> {
 
   @override
   Widget build(BuildContext context) {
-    var tap = Provider.of<TeacherAttendanceProvider>(context, listen: false);
+    var sap = Provider.of<StudentAttendanceProvider>(context, listen: false);
     widget.isForPresent
-        ? tap.teacherAttendance.forEach((element) {
-            element.presentTeachers.forEach((elementt) {
+        ? sap.studentAttendance.forEach((element) {
+            element.presentChildren.forEach((elementt) {
               // print(elementt['teacher_id']);
-              if (elementt['teacher_id'] == currentUser!.roleId) {
+              if (elementt['student_id'] == widget.studentId) {
                 _selectedDays.add(DateTime.parse(element.dateTime));
               }
             });
           })
-        : tap.teacherAttendance.forEach((element) {
-            element.absentTeachers.forEach((elementt) {
+        : sap.studentAttendance.forEach((element) {
+            element.absentChildren.forEach((elementt) {
               // print(elementt['teacher_id']);
-              if (elementt['teacher_id'] == currentUser!.roleId) {
+              if (elementt['student_id'] == widget.studentId) {
                 _selectedDays.add(DateTime.parse(element.dateTime));
               }
             });
           });
-    return Scaffold(
-      body: Column(
+    return SingleChildScrollView(
+      physics: ClampingScrollPhysics(),
+      child: Column(
         children: [
           TableCalendar<Event>(
             firstDay: kFirstDay,

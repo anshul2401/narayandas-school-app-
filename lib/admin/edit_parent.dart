@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:narayandas_app/admin/search_parent.dart';
 import 'package:narayandas_app/model/parent_model.dart';
 import 'package:narayandas_app/model/teacher_model.dart';
 import 'package:narayandas_app/provider/parents_provider.dart';
+import 'package:narayandas_app/provider/student_provider.dart';
 import 'package:narayandas_app/provider/teacher_provider.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
@@ -431,6 +433,76 @@ class _EditParentState extends State<EditParent> {
                           },
                         ),
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          getButton(() async {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return StatefulBuilder(builder: (context, s) {
+                                    return AlertDialog(
+                                      title: getBoldText(
+                                          'Delete User', 16, Colors.green),
+                                      content: getNormalText(
+                                          'Are you sure?', 13, Colors.black),
+                                      actions: [
+                                        RaisedButton(
+                                            color: Colors.red,
+                                            child: getNormalText(
+                                                'Cancel', 14, Colors.white),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            }),
+                                        RaisedButton(
+                                            color: Colors.green,
+                                            child: getNormalText(
+                                                'Delete', 14, Colors.white),
+                                            onPressed: () {
+                                              var parentProvider =
+                                                  Provider.of<ParentsProvider>(
+                                                      context,
+                                                      listen: false);
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+
+                                              parentProvider
+                                                  .deleteParent(
+                                                      widget.parentModel.id)
+                                                  .then((value) {
+                                                var studentProvider = Provider
+                                                    .of<StudentProvider>(
+                                                        context,
+                                                        listen: false);
+                                                studentProvider
+                                                    .deleteStudent(
+                                                        widget.parentModel.id)
+                                                    .then((value) {
+                                                  setState(() {
+                                                    isLoading = false;
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                  Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              SearchParent(
+                                                                isEdit: true,
+                                                              )));
+                                                });
+                                              });
+                                            }),
+                                      ],
+                                    );
+                                  });
+                                });
+                          }, 'Delete User', Colors.red),
+                        ],
+                      )
                     ],
                   ),
                 ),

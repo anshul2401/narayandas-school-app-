@@ -24,6 +24,7 @@ import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:narayandas_app/utils/strings.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class THomePage extends StatefulWidget {
   const THomePage({Key? key}) : super(key: key);
@@ -76,7 +77,7 @@ class _THomePageState extends State<THomePage> {
   @override
   Widget build(BuildContext context) {
     late TeacherModel teacherModel;
-    var teacherProvider = Provider.of<TeacherProvider>(context, listen: false);
+    var teacherProvider = Provider.of<TeacherProvider>(context);
     teacherModel =
         teacherProvider.teacher.firstWhere((e) => e.id == currentUser!.roleId);
 
@@ -274,7 +275,16 @@ class _THomePageState extends State<THomePage> {
                 color: MyColors.blueColor,
               ),
               title: const Text('Log Out'),
-              onTap: () {
+              onTap: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                final prefs = await SharedPreferences.getInstance();
+                final success = await prefs.remove('USERKEY');
+                final successs = await prefs.remove('USERROLEKEY');
+                setState(() {
+                  isLoading = false;
+                });
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Login()));

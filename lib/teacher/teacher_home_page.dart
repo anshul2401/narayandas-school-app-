@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:narayandas_app/chat/chat_home.dart';
 import 'package:narayandas_app/chat2/page/chats_page.dart';
 import 'package:narayandas_app/provider/notice_provider.dart';
+import 'package:narayandas_app/provider/story_provider.dart';
 import 'package:narayandas_app/provider/teacher_attendance_provider.dart';
 import 'package:narayandas_app/provider/teacher_provider.dart';
 import 'package:narayandas_app/teacher/profile_page.dart';
@@ -47,6 +48,11 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
     Future.delayed(Duration.zero).then((value) {
       Provider.of<TeacherAttendanceProvider>(context, listen: false)
           .fetAndSetTeacherAttendance()
+          .then((value) {});
+    });
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<StoryProvider>(context, listen: false)
+          .fetchAndSetStroy()
           .then((value) {});
     });
 

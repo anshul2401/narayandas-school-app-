@@ -1,5 +1,7 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:narayandas_app/admin/teacher_list.dart';
 import 'package:narayandas_app/model/teacher_model.dart';
 import 'package:narayandas_app/provider/teacher_provider.dart';
 import 'package:narayandas_app/utils/colors.dart';
@@ -307,6 +309,72 @@ class _EditTeacherState extends State<EditTeacher> {
                           },
                         ),
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          getButton(() async {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return StatefulBuilder(builder: (context, s) {
+                                    return AlertDialog(
+                                      title: getBoldText(
+                                          'Delete User', 16, Colors.green),
+                                      content: getNormalText(
+                                          'Are you sure?', 13, Colors.black),
+                                      actions: [
+                                        RaisedButton(
+                                            color: Colors.red,
+                                            child: getNormalText(
+                                                'Cancel', 14, Colors.white),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            }),
+                                        RaisedButton(
+                                            color: Colors.green,
+                                            child: getNormalText(
+                                                'Delete', 14, Colors.white),
+                                            onPressed: () {
+                                              var teacherProvider =
+                                                  Provider.of<TeacherProvider>(
+                                                      context,
+                                                      listen: false);
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+                                              widget.teacherModel.document
+                                                  .forEach((element) async {
+                                                await FirebaseStorage.instance
+                                                    .refFromURL(
+                                                        element['doc_img']!)
+                                                    .delete();
+                                              });
+
+                                              teacherProvider
+                                                  .deleteTeacher(
+                                                      widget.teacherModel.id)
+                                                  .then((value) {
+                                                setState(() {
+                                                  isLoading = false;
+                                                });
+                                                Navigator.of(context).pop();
+                                                Navigator.pushReplacement(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TeacherList()));
+                                              });
+                                            }),
+                                      ],
+                                    );
+                                  });
+                                });
+                          }, 'Delete User', Colors.red),
+                        ],
+                      )
                     ],
                   ),
                 ),

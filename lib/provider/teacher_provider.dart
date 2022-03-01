@@ -165,4 +165,22 @@ class TeacherProvider with ChangeNotifier {
       print('...');
     }
   }
+
+  Future<void> deleteTeacher(String id) async {
+    final index = _teacher.indexWhere((c) => c.id == id);
+    if (index >= 0) {
+      try {
+        var url = baseUrl + 'teachers/$id.json';
+        await http.delete(
+          Uri.parse(url),
+        );
+        _teacher.removeAt(index);
+        notifyListeners();
+      } catch (e) {
+        throw (e);
+      }
+    } else {
+      print('...');
+    }
+  }
 }

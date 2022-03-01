@@ -36,6 +36,7 @@ import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:narayandas_app/utils/shared_pref.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({Key? key}) : super(key: key);
@@ -103,7 +104,7 @@ class _MyHomePageState extends State<AdminHomePage> {
           isLoading = false;
         });
       });
-      callApi();
+      // callApi();
     });
 
     super.initState();
@@ -135,7 +136,16 @@ class _MyHomePageState extends State<AdminHomePage> {
               ),
             ),
             ListTile(
-              onTap: () {
+              onTap: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                final prefs = await SharedPreferences.getInstance();
+                final success = await prefs.remove('USERKEY');
+                final successs = await prefs.remove('USERROLEKEY');
+                setState(() {
+                  isLoading = false;
+                });
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Login()));
               },

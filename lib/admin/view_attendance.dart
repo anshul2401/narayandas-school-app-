@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:narayandas_app/admin/student_attendance_cal_view.dart';
 import 'package:narayandas_app/model/parent_model.dart';
 import 'package:narayandas_app/model/student_attendance_model.dart';
 import 'package:narayandas_app/model/student_model.dart';
@@ -38,14 +39,15 @@ class _ViewAttendanceState extends State<ViewAttendance> {
         isLoading = false;
       });
     });
-    var st = Provider.of<StudentAttendanceProvider>(context, listen: false);
-    attendance.addAll(st.studentAttendance);
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var st = Provider.of<StudentAttendanceProvider>(context, listen: false);
+    attendance.addAll(st.studentAttendance);
+
     getAttendance() {
       var st;
       attendance.forEach((element) {
@@ -110,17 +112,38 @@ class _ViewAttendanceState extends State<ViewAttendance> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              getBoldText(
-                                                  (index + 1).toString(),
-                                                  15,
-                                                  Colors.black),
-                                              SizedBox(
-                                                width: 20,
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  getBoldText(
+                                                      (index + 1).toString(),
+                                                      15,
+                                                      Colors.black),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  getNormalText(data['name'],
+                                                      14, Colors.black),
+                                                ],
                                               ),
-                                              getNormalText(data['name'], 14,
-                                                  Colors.black),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              StudentAttendanceCalanderView(
+                                                                  studentId: data[
+                                                                      'student_id'])));
+                                                },
+                                                child: getNormalText(
+                                                    'View Record',
+                                                    12,
+                                                    Colors.blue),
+                                              )
                                             ],
                                           ),
                                         ),
@@ -146,17 +169,38 @@ class _ViewAttendanceState extends State<ViewAttendance> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              getBoldText(
-                                                  (index + 1).toString(),
-                                                  15,
-                                                  Colors.black),
-                                              SizedBox(
-                                                width: 20,
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  getBoldText(
+                                                      (index + 1).toString(),
+                                                      15,
+                                                      Colors.black),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  getNormalText(data['name'],
+                                                      14, Colors.black),
+                                                ],
                                               ),
-                                              getNormalText(data['name'], 14,
-                                                  Colors.black),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              StudentAttendanceCalanderView(
+                                                                  studentId: data[
+                                                                      'student_id'])));
+                                                },
+                                                child: getNormalText(
+                                                    'View Record',
+                                                    12,
+                                                    Colors.blue),
+                                              )
                                             ],
                                           ),
                                         ),

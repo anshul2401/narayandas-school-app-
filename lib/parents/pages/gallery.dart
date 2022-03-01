@@ -51,7 +51,12 @@ class _GalleryState extends State<Gallery> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      ListView.builder(
+                      GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 3 / 3.9,
+                          ),
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: images.length,
@@ -62,6 +67,7 @@ class _GalleryState extends State<Gallery> {
                                 borderRadius: BorderRadius.circular(5),
                                 child: CachedNetworkImage(
                                   // fit: BoxFit.cover,
+                                  fit: BoxFit.fitWidth,
                                   imageUrl: images[index].imgUrl,
                                   progressIndicatorBuilder:
                                       (context, url, downloadProgress) =>

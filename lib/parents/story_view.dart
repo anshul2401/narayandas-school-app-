@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/model/story_model.dart';
 import 'package:narayandas_app/provider/story_provider.dart';
+import 'package:narayandas_app/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:story_view/story_view.dart';
 
@@ -64,11 +65,11 @@ class StoryHome extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => MoreStories()));
                 },
                 child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.black54,
+                  decoration: const BoxDecoration(
+                      color: MyColors.blueColor,
                       borderRadius:
                           BorderRadius.vertical(bottom: Radius.circular(8))),
-                  padding: EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[

@@ -63,7 +63,28 @@ class _TeacherProfilePageState extends State<TeacherProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               getBoldCaptialText('Attendance Record', 15, MyColors.blueColor),
-              Container(height: 400, child: CalanderView()),
+              ExpansionTile(
+                title: getNormalText('Present days', 14, Colors.black),
+                children: [
+                  Container(
+                      height: 400,
+                      child: CalanderView(
+                        isForPresent: true,
+                      )),
+                ],
+              ),
+              Divider(),
+              ExpansionTile(
+                title: getNormalText('Absent days', 14, Colors.black),
+                children: [
+                  Container(
+                      height: 400,
+                      child: CalanderView(
+                        isForPresent: false,
+                      )),
+                ],
+              ),
+              Divider(),
               getDetailContainer('Name', teacherModel.name),
               getDetailContainer('Address', teacherModel.address),
               getDetailContainer('phone no.', teacherModel.phone),

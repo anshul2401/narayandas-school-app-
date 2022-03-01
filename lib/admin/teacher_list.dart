@@ -43,7 +43,9 @@ class _TeacherListState extends State<TeacherList> {
       body: isLoading
           ? getLoading(context)
           : SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
               child: ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: teachers.length,
                   itemBuilder: (context, index) {

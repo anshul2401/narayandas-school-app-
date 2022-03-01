@@ -59,6 +59,7 @@ class _AddStoryState extends State<AddStory> {
       body: isLoading
           ? getLoading(context)
           : SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Form(
@@ -67,6 +68,7 @@ class _AddStoryState extends State<AddStory> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: story.length,
                           itemBuilder: (context, index) {

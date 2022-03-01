@@ -17,6 +17,7 @@ import 'package:narayandas_app/provider/student_provider.dart';
 import 'package:narayandas_app/provider/teacher_attendance_provider.dart';
 import 'package:narayandas_app/provider/teacher_provider.dart';
 import 'package:narayandas_app/provider/youtube_provider.dart';
+import 'package:narayandas_app/splash.dart';
 import 'package:narayandas_app/utils/shared_pref.dart';
 import 'package:provider/provider.dart';
 
@@ -80,11 +81,10 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
-          title: 'Narayandas International',
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          home: Login(),
-        ));
+            title: 'Narayandas International',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home: Splash()));
   }
 }

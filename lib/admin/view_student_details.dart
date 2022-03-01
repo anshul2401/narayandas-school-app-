@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:narayandas_app/admin/print.dart';
+import 'package:narayandas_app/admin/search_student.dart';
 import 'package:narayandas_app/admin/view_full_screenImg.dart';
 import 'package:narayandas_app/model/parent_model.dart';
 import 'package:narayandas_app/model/student_model.dart';
@@ -424,7 +425,7 @@ class _ViewStudentDetailsState extends State<ViewStudentDetails> {
                           child: getNormalText('Save Docs', 14, Colors.white),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),

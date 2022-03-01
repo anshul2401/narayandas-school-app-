@@ -192,6 +192,7 @@ class _LoginState extends State<Login> {
                             height: 20,
                           ),
                           RaisedButton(
+                            shape: StadiumBorder(),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 setState(() {

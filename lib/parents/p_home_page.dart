@@ -14,6 +14,7 @@ import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
 import 'package:narayandas_app/utils/strings.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class PHomePage extends StatefulWidget {
@@ -105,7 +106,11 @@ class _PHomePageState extends State<PHomePage> {
                 color: MyColors.blueColor,
               ),
               title: const Text('Log Out'),
-              onTap: () {
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+                final success = await prefs.remove('USERKEY');
+                final successs = await prefs.remove('USERROLEKEY');
+
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Login()));

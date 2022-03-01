@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:narayandas_app/utils/colors.dart';
 import 'package:narayandas_app/utils/helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactUs extends StatefulWidget {
   const ContactUs({Key? key}) : super(key: key);
@@ -57,6 +58,14 @@ class _ContactUsState extends State<ContactUs> {
                   15,
                   Colors.black),
               SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                  onTap: () async {
+                    await launch('https://maps.app.goo.gl/q8quSUspKgKWgE1D7');
+                  },
+                  child: getNormalText('View on map', 15, Colors.blue)),
+              SizedBox(
                 height: 15,
               ),
               Row(
@@ -74,9 +83,29 @@ class _ContactUsState extends State<ContactUs> {
               SizedBox(
                 height: 10,
               ),
-              getNormalText('088715 88898', 15, Colors.black),
+              Row(
+                children: [
+                  getNormalText('088715 88898', 15, Colors.black),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: GestureDetector(
+                      onTap: () => launch("tel://+918871588898"),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color: Colors.green),
+                        padding: EdgeInsets.all(5),
+                        child: Icon(
+                          Icons.phone,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
               SizedBox(
-                height: 15,
+                height: 10,
               ),
               Row(
                 children: [
